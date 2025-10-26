@@ -3,7 +3,7 @@ import pymysql
 def next(db_config):
     """
     Return the next (earliest due) not-done task as a tuple
-    (item, type, started, due, done), or None when no task found.
+    (id, userid, title, description, due_date, status), or None when no task found.
     """
 
     conn = None
@@ -11,8 +11,8 @@ def next(db_config):
         conn = pymysql.connect(**db_config)
         with conn.cursor() as cursor:
             sql = (
-                "SELECT item, type, started, due, done FROM ToDoData "
-                "WHERE done IS NULL ORDER BY due ASC LIMIT 1"
+                "SELECT id, userid, title, description, due_date, status FROM tasks "
+                "WHERE status != 'done' ORDER BY due_date ASC LIMIT 1"
             )
 
             cursor.execute(sql)
