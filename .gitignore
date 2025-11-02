@@ -1,4 +1,4 @@
 .venv/
 .DS_Store
 To-Do-App/src/backend/__pycache__/
-.env
+*.env
