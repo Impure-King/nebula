@@ -1,2 +1,4 @@
-
+pytest==8.4.2
+pymysql==1.1.2
+dotenv==1.1.1
 
