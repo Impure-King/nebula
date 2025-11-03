@@ -38,10 +38,11 @@ The Notes App is a mobile application designed to provide users with a simple, s
 - Rich text editor with formatting (bold, italic, bullet points)
 - Auto-save functionality every 30 seconds during editing
 - Character and word count display in real-time
-- Version history tracking (last 5 versions)
 - Bulk deletion capability with multi-select
 - Search functionality across note titles and content
 - Performance optimization and caching
+- **OCR Integration**: Optical Character Recognition system for digitizing handwritten or printed notes via camera/scanner
+- **AI-Powered Note Enhancement**: AI integration for note explanation, summarization, and content suggestions
 
 ### Future Considerations 
 #### Enhanced Authentication
@@ -51,10 +52,9 @@ The Notes App is a mobile application designed to provide users with a simple, s
 
 #### Advanced Features to Include If Time Permits
 - Undo/redo functionality during editing sessions
+- Version history
 - Note organization with folders/tags
 - **Real-time Collaborative Editing**: Multiple users can edit shared notes simultaneously
-- **OCR Integration**: Optical Character Recognition system for digitizing handwritten or printed notes via camera/scanner
-- **AI-Powered Note Enhancement**: AI integration for note explanation, summarization, and content suggestions
 - **Security Enhancements**: Advanced encryption, audit logging, and compliance features
 
 ## Technical Requirements
@@ -137,6 +137,7 @@ The Notes App is a mobile application designed to provide users with a simple, s
 - Performance optimization and caching
 - Comprehensive testing and quality assurance
 - Documentation completion and deployment preparation
+- AI integration for note explanation, summarization, and content suggestions
 
 
 ## Risk Management
