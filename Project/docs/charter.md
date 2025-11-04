@@ -77,6 +77,8 @@ The Notes App is a mobile application designed to provide users with a simple, s
 - Foreign key relationships and data integrity
 - Indexing for search performance
 - Backup and recovery procedures
+- MySQL ≥ 8.0.13 if using DEFAULT(UUID()); otherwise UUIDs generated in app
+- Secrets via .env (not committed)
 
 ## Development Process
 ### Methodology
@@ -138,7 +140,6 @@ The Notes App is a mobile application designed to provide users with a simple, s
 - Comprehensive testing and quality assurance
 - Documentation completion and deployment preparation
 - AI integration for note explanation, summarization, and content suggestions
-
 
 ## Risk Management
 ### Technical Risks
