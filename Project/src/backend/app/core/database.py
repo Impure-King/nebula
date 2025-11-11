@@ -1,22 +1,25 @@
 from dotenv import load_dotenv
-import pymysql
 import os
+from supabase import create_client, Client
 
-#Task = Tuple[int, str, str, Optional[str], date, str]
-
-# Load environment variables for DB
+# Load environment variables
 load_dotenv()
 
+# Supabase configuration
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY")  # For admin operations
 
-# Database connection settings
-DB_CONFIG = {
-    "host": os.environ.get("DB_HOST"),
-    "user": os.environ.get("DB_USER"),
-    "password": os.environ.get("DB_PASSWORD"),
-    "database": os.environ.get("DB_NAME"),
-    "cursorclass": pymysql.cursors.DictCursor
-}
+# Supabase client
+def get_supabase() -> Client:
+    """Get Supabase client for regular operations."""
+    if not SUPABASE_URL or not SUPABASE_KEY:
+        raise ValueError("SUPABASE_URL and SUPABASE_KEY must be set")
+    return create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# --- Database Connection ---
-def get_connection():
-    return pymysql.connect(**DB_CONFIG)
+# Supabase admin client (for server-side operations)
+def get_supabase_admin() -> Client:
+    """Get Supabase admin client for server-side operations."""
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        raise ValueError("SUPABASE_URL and SUPABASE_SERVICE_KEY must be set")
+    return create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
