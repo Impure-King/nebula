@@ -6,10 +6,9 @@ DROP TABLE IF EXISTS public.notes;
 DROP TABLE IF EXISTS public.users;
 
 CREATE TABLE public.users (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL UNIQUE,
   name TEXT NOT NULL,
-  password_hash TEXT NOT NULL,
   data JSONB
 );
 
