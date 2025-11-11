@@ -1,20 +1,36 @@
-DROP TABLE IF EXISTS notes;
-DROP TABLE IF EXISTS users;
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
-CREATE TABLE users (
-  id CHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-  email VARCHAR(255) UNIQUE NOT NULL,
-  name VARCHAR(255) NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  data JSON NULL
+DROP TRIGGER IF EXISTS notes_set_updated_at ON public.notes;
+DROP FUNCTION IF EXISTS public.set_current_timestamp_on_update();
+DROP TABLE IF EXISTS public.notes;
+DROP TABLE IF EXISTS public.users;
+
+CREATE TABLE public.users (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  email TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL,
+  password_hash TEXT NOT NULL,
+  data JSONB
 );
 
-CREATE TABLE notes (
-  id CHAR(36) NOT NULL PRIMARY KEY DEFAULT (UUID()),
-  user_id CHAR(36) NOT NULL,
+CREATE TABLE public.notes (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES public.users(id) ON DELETE CASCADE,
   content TEXT NOT NULL,
-  date_modified TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  basic_stats JSON NULL,
-  CONSTRAINT fk_notes_user FOREIGN KEY (user_id)
-    REFERENCES users(id) ON DELETE CASCADE
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  basic_stats JSONB
 );
+
+CREATE FUNCTION public.set_current_timestamp_on_update()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = NOW();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notes_set_updated_at
+BEFORE UPDATE ON public.notes
+FOR EACH ROW
+EXECUTE FUNCTION public.set_current_timestamp_on_update();
