@@ -1,20 +1,33 @@
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
-from app.core.database import get_connection
+from typing import Optional
+from app.core.database import get_supabase
+from app.core.auth import get_current_user
+from supabase import Client
 
-router = APIRouter(prefix="/user", tags=["user"])
+router = APIRouter(prefix="/users", tags=["users"])
 
 # ---------------------------
 # Models
 # ---------------------------
 
-'''
-class editUserInfoRequest(BaseModel):
-    name: str | None = None
-    phone: str | None = None
-    profile_data: list | None = None
-'''
+class UserResponse(BaseModel):
+    id: str
+    email: str
+    # Add other fields if profiles table is created later
 
 # ---------------------------
 # Routes
-# -----------------
+# ---------------------------
+
+@router.get("/me", response_model=UserResponse)
+async def get_current_user_info(
+    current_user: dict = Depends(get_current_user),
+    supabase: Client = Depends(get_supabase)
+):
+    """
+    Get current authenticated user information.
+    """
+    # TODO: Implement
+    # Return user info from auth.users or profiles table if it exists
+    pass

@@ -15,6 +15,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import MarkdownRenderer from '../../../components/MarkdownRenderer';
 import { Note } from '../../../types/note';
 import { SAMPLE_NOTES } from '../../../data/sampleNotes';
 
@@ -31,18 +32,20 @@ export default function NoteDetailScreen() {
   const [note, setNote] = useState<Note | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [lastSaved, setLastSaved] = useState<Date | null>(null);
+
+  const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
   // Refs for debouncing and animations
   const saveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const saveStatusTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
   // Load note data based on route parameter
   useEffect(() => {
     if (id === 'new') {
-      // Handle new note creation
+      // Handle new note creation - start in edit mode
       const newNote: Note = {
         id: Date.now().toString(),
         title: '',
@@ -54,22 +57,24 @@ export default function NoteDetailScreen() {
       setNote(newNote);
       setTitle('');
       setContent('');
+      setIsEditMode(true); // Auto-enable edit mode for new notes
     } else {
-      // Load existing note
+      // Load existing note - start in read-only mode
       const existingNote = SAMPLE_NOTES.find(n => n.id === id);
       if (existingNote) {
         setNote(existingNote);
         setTitle(existingNote.title);
         setContent(existingNote.content);
+        setIsEditMode(false); // Start in read-only mode
       } else {
-        // Note not found - show error and navigate back
+        // Note not found - show error and navigate to notes list
         Alert.alert(
           'Note Not Found',
           'The note you are looking for could not be found. It may have been deleted.',
           [
             {
               text: 'OK',
-              onPress: () => router.back(),
+              onPress: () => router.replace('/(main)/(tabs)/notes'),
             },
           ]
         );
@@ -99,7 +104,7 @@ export default function NoteDetailScreen() {
   const saveNote = useCallback(async (retryCount = 0) => {
     if (!note) return;
 
-    setIsSaving(true);
+    setSaveStatus('saving');
 
     try {
       // Simulate save operation
@@ -116,12 +121,21 @@ export default function NoteDetailScreen() {
       // In a real app, this would save to backend/database
       console.log('Note saved:', updatedNote);
 
-      setLastSaved(new Date());
       setIsDirty(false);
-      setIsSaving(false);
+      setSaveStatus('saved');
+
+      // Clear any existing timeout
+      if (saveStatusTimeoutRef.current) {
+        clearTimeout(saveStatusTimeoutRef.current);
+      }
+
+      // Hide "Saved" indicator after 2 seconds
+      saveStatusTimeoutRef.current = setTimeout(() => {
+        setSaveStatus('idle');
+      }, 2000);
     } catch (error) {
       console.error('Failed to save note:', error);
-      setIsSaving(false);
+      setSaveStatus('idle');
 
       // Retry logic with exponential backoff
       if (retryCount < 3) {
@@ -184,6 +198,15 @@ export default function NoteDetailScreen() {
     router.back();
   }, [isDirty, saveNote, router]);
 
+  // Toggle edit mode
+  const toggleEditMode = useCallback(() => {
+    if (isEditMode && isDirty) {
+      // Save when exiting edit mode
+      saveNote();
+    }
+    setIsEditMode(!isEditMode);
+  }, [isEditMode, isDirty, saveNote]);
+
   // Handle delete with error handling
   const handleDelete = useCallback(async () => {
     Alert.alert(
@@ -205,7 +228,7 @@ export default function NoteDetailScreen() {
               Alert.alert('Success', 'Note deleted successfully', [
                 {
                   text: 'OK',
-                  onPress: () => router.back(),
+                  onPress: () => router.replace('/(main)/(tabs)/notes'),
                 },
               ]);
             } catch (error) {
@@ -231,13 +254,16 @@ export default function NoteDetailScreen() {
     );
   }, [note, router]);
 
-  // Save on unmount if dirty
+  // Save on unmount if dirty and cleanup timeouts
   useEffect(() => {
     return () => {
       if (isDirty && saveTimeoutRef.current) {
         clearTimeout(saveTimeoutRef.current);
         // Force immediate save on unmount
         saveNote();
+      }
+      if (saveStatusTimeoutRef.current) {
+        clearTimeout(saveStatusTimeoutRef.current);
       }
     };
   }, [isDirty, saveNote]);
@@ -282,26 +308,38 @@ export default function NoteDetailScreen() {
           </TouchableOpacity>
 
           <View className="flex-row items-center">
-            {/* Save indicator */}
-            {isSaving && (
+            {/* Save indicator - only show when actively saving or just saved */}
+            {isEditMode && saveStatus !== 'idle' && (
               <View 
                 className="flex-row items-center mr-4"
-                accessibilityLabel="Saving note"
+                accessibilityLabel={saveStatus === 'saving' ? "Saving note" : "Note saved"}
                 accessibilityLiveRegion="polite"
               >
-                <Text className="text-gray-400 text-sm mr-2">Saving...</Text>
-                <View className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                {saveStatus === 'saving' ? (
+                  <>
+                    <Text className="text-gray-400 text-sm mr-2">Saving...</Text>
+                    <View className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                  </>
+                ) : (
+                  <Text className="text-gray-500 text-sm">Saved</Text>
+                )}
               </View>
             )}
-            {!isSaving && lastSaved && (
-              <Text 
-                className="text-gray-500 text-sm mr-4"
-                accessibilityLabel="Note saved"
-                accessibilityLiveRegion="polite"
-              >
-                Saved
-              </Text>
-            )}
+
+            {/* Edit/Done button */}
+            <TouchableOpacity
+              onPress={toggleEditMode}
+              className="p-2 mr-2"
+              style={{ minWidth: 44, minHeight: 44 }}
+              accessibilityLabel={isEditMode ? "Done editing" : "Edit note"}
+              accessibilityRole="button"
+            >
+              <Ionicons 
+                name={isEditMode ? "checkmark" : "create-outline"} 
+                size={24} 
+                color={isEditMode ? "#3B82F6" : "#FFFFFF"} 
+              />
+            </TouchableOpacity>
 
             {/* Delete button */}
             {id !== 'new' && (
@@ -328,31 +366,51 @@ export default function NoteDetailScreen() {
             alignSelf: 'center',
           }}
         >
-          {/* Title input */}
-          <TextInput
-            value={title}
-            onChangeText={handleTitleChange}
-            placeholder="Note title"
-            placeholderTextColor="#6B7280"
-            className="text-white text-3xl font-bold py-4 border-b border-gray-800"
-            multiline
-            accessibilityLabel="Note title"
-            accessibilityHint="Enter the title for your note"
-          />
+          {/* Title - editable or read-only based on mode */}
+          {isEditMode ? (
+            <TextInput
+              value={title}
+              onChangeText={handleTitleChange}
+              placeholder="Note title"
+              placeholderTextColor="#6B7280"
+              className="text-white text-3xl font-bold py-4 border-b border-gray-800"
+              multiline
+              accessibilityLabel="Note title"
+              accessibilityHint="Enter the title for your note"
+            />
+          ) : (
+            <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7}>
+              <Text className="text-white text-3xl font-bold py-4 border-b border-gray-800">
+                {title || 'Untitled Note'}
+              </Text>
+            </TouchableOpacity>
+          )}
 
-          {/* Content editor */}
-          <TextInput
-            value={content}
-            onChangeText={handleContentChange}
-            placeholder="Start writing..."
-            placeholderTextColor="#6B7280"
-            className="text-white text-base leading-relaxed py-6"
-            multiline
-            textAlignVertical="top"
-            style={{ minHeight: 400 }}
-            accessibilityLabel="Note content"
-            accessibilityHint="Enter the content for your note. Supports markdown formatting."
-          />
+          {/* Content - editable or read-only based on mode */}
+          {isEditMode ? (
+            <TextInput
+              value={content}
+              onChangeText={handleContentChange}
+              placeholder="Start writing... (Supports Markdown and LaTeX with $ or $$)"
+              placeholderTextColor="#6B7280"
+              className="text-white text-base leading-relaxed py-6"
+              multiline
+              textAlignVertical="top"
+              style={{ minHeight: 400 }}
+              accessibilityLabel="Note content"
+              accessibilityHint="Enter the content for your note. Supports markdown and LaTeX formatting."
+            />
+          ) : (
+            <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7} style={{ minHeight: 400 }}>
+              <View style={{ paddingTop: 24, paddingBottom: 24 }}>
+                {content ? (
+                  <MarkdownRenderer content={content} />
+                ) : (
+                  <Text className="text-gray-500 text-base">No content</Text>
+                )}
+              </View>
+            </TouchableOpacity>
+          )}
         </ScrollView>
       </KeyboardAvoidingView>
       </Animated.View>

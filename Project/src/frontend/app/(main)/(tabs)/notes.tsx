@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
-import { Note, SortOption } from '../../types/note';
-import { SAMPLE_NOTES } from '../../data/sampleNotes';
-import { filterNotesBySearch, sortNotes } from '../../utils/noteUtils';
-import NotesHeader from '../../components/NotesHeader';
-import SearchBar from '../../components/SearchBar';
-import SortControls from '../../components/SortControls';
-import NoteCard from '../../components/NoteCard';
-import NoteCardSkeleton from '../../components/NoteCardSkeleton';
+import { Note, SortOption } from '../../../types/note';
+import { SAMPLE_NOTES } from '../../../data/sampleNotes';
+import { filterNotesBySearch, sortNotes } from '../../../utils/noteUtils';
+import NotesHeader from '../../../components/NotesHeader';
+import SearchBar from '../../../components/SearchBar';
+import SortControls from '../../../components/SortControls';
+import NoteCard from '../../../components/NoteCard';
+import NoteCardSkeleton from '../../../components/NoteCardSkeleton';
 
 export default function NotesScreen() {
   const router = useRouter();
