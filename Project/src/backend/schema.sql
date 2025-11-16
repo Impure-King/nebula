@@ -9,6 +9,7 @@ DROP TABLE IF EXISTS public.notes;
 CREATE TABLE public.notes (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+  title TEXT NOT NULL,
   content TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
@@ -41,7 +42,7 @@ EXECUTE FUNCTION public.set_current_timestamp_on_update();
 -- 1. Create the profiles table
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
-  full_name TEXT,
+  full_name TEXT NOT NULL,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -76,10 +77,27 @@ CREATE POLICY "Users can update their own profile."
   USING (auth.uid() = id)
   WITH CHECK (auth.uid() = id);
 
+CREATE POLICY "Users can delete their own profile."
+  ON public.profiles FOR DELETE
+  USING (auth.uid() = id);
+
 -- 5. Enable RLS for the existing notes table
 ALTER TABLE public.notes ENABLE ROW LEVEL SECURITY;
 
 -- 6. Add RLS policy for notes
-CREATE POLICY "Users can view and manage their own notes."
-  ON public.notes FOR ALL
+CREATE POLICY "Users can view their own notes"
+  ON public.notes FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own notes"
+  ON public.notes FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own notes"
+  ON public.notes FOR UPDATE
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own notes"
+  ON public.notes FOR DELETE
   USING (auth.uid() = user_id);
