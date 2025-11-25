@@ -36,10 +36,12 @@ SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 5. run server
 
 ```bash
-uvicorn app.main:app --reload
+uvicorn app.main:app --reload --host 0.0.0.0
+# OR use the helper script:
+# ./run.sh
 ```
 
-server runs on `http://localhost:8000`
+server runs on `http://0.0.0.0:8000` (accessible via your LAN IP)
 
 ## api docs
 

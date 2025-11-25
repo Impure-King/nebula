@@ -20,7 +20,9 @@ async function fetchWithAuth(endpoint: string, options: FetchOptions = {}) {
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
+  const url = `${API_URL}${endpoint}`;
+  console.log(`[API] Fetching: ${url}`);
+  const response = await fetch(url, {
     ...options,
     headers,
   });
@@ -35,15 +37,15 @@ async function fetchWithAuth(endpoint: string, options: FetchOptions = {}) {
 
 export const api = {
   profiles: {
-    create: (data: { full_name: string }) => 
+    create: (data: { full_name: string }) =>
       fetchWithAuth('/profiles/', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
-      
-    getMe: () => 
+
+    getMe: () =>
       fetchWithAuth('/profiles/me'),
-      
+
     update: (data: { full_name?: string }) =>
       fetchWithAuth('/profiles/me', {
         method: 'PUT',
