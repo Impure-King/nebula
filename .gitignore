@@ -8,3 +8,7 @@ To-Do-App/src/backend/__pycache__/
 .kiro/
 Project/extrafiles/
 .vscode/
+
+# Ignore Google Cloud service account keys
+key.json
+key.b64
