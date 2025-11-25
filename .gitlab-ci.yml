@@ -36,10 +36,6 @@ deploy:
     - echo "$GCLOUD_SERVICE_KEY" | base64 -d > /tmp/key.json
     - gcloud auth activate-service-account --key-file=/tmp/key.json
     - gcloud config set project $PROJECT_ID
-    - gcloud run deploy $SERVICE_NAME \
-        --image $IMAGE:$CI_COMMIT_SHA \
-        --platform managed \
-        --region $REGION \
-        --allow-unauthenticated
+    - gcloud run deploy $SERVICE_NAME --image $IMAGE:$CI_COMMIT_SHA --platform managed --region $REGION --allow-unauthenticated
   only:
     - issue-#11-notes-app
