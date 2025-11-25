@@ -1,7 +1,10 @@
 import { supabase } from "@/lib/supabase";
 
 // Default to localhost for iOS/Web, 10.0.2.2 for Android Emulator
-const API_URL = process.env.EXPO_PUBLIC_API_URL || 'http://localhost:8000';
+const LOCAL_API_URL = 'http://localhost:8000';
+const PROD_API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+const API_URL = __DEV__ ? LOCAL_API_URL : (PROD_API_URL || LOCAL_API_URL);
 
 interface FetchOptions extends RequestInit {
   headers?: Record<string, string>;
