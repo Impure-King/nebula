@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { useRouter } from "expo-router";
-import { 
-  Box, 
-  VStack, 
+import {
+  Box,
+  VStack,
   HStack,
   Center,
-  Heading, 
-  Text, 
-  Button, 
+  Heading,
+  Text,
+  Button,
   ButtonText,
   Input,
   InputField,
@@ -15,11 +15,20 @@ import {
   Checkbox,
   CheckboxIndicator,
   CheckboxIcon,
-  CheckboxLabel
+  CheckboxLabel,
 } from "@/components/ui";
-import { StatusBar } from 'expo-status-bar';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Alert, SafeAreaView } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { StatusBar } from "expo-status-bar";
+import {
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  Alert,
+  SafeAreaView,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { supabase } from "@/lib/supabase";
+import { api } from "@/services/api";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -33,35 +42,92 @@ export default function SignUpPage() {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSignUp = async () => {
+    // Validation
+    if (!name || !email || !password || !confirmPassword) {
+      Alert.alert("Error", "Please fill in all fields");
+      return;
+    }
+
     if (!agreeToTerms) {
       Alert.alert("Terms Required", "Please agree to the terms and conditions");
       return;
     }
+
     if (password !== confirmPassword) {
       Alert.alert("Password Mismatch", "Passwords do not match");
       return;
     }
-    
+
+    if (password.length < 6) {
+      Alert.alert("Weak Password", "Password must be at least 6 characters");
+      return;
+    }
+
     setIsLoading(true);
-    // TODO: Implement actual signup logic
-    setTimeout(() => {
+    try {
+      // Step 1: Create auth account with Supabase
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password: password,
+        options: {
+          data: {
+            full_name: name.trim(),
+          },
+        },
+      });
+
+      if (error) {
+        Alert.alert("Signup Failed", error.message);
+        return;
+      }
+
+      if (data.user) {
+        // Step 2: Create profile in backend
+        try {
+          await api.profiles.create({
+            full_name: name.trim(),
+          });
+
+          Alert.alert(
+            "Success!",
+            "Account created successfully. Please sign in.",
+            [
+              {
+                text: "OK",
+                onPress: () => router.replace("/(auth)/login"),
+              },
+            ]
+          );
+        } catch (profileError) {
+          // If profile creation fails, we should probably warn the user
+          // The auth account is created, but the profile is missing
+          console.error("Profile creation failed:", profileError);
+          Alert.alert(
+            "Account Created",
+            "Your account was created but we encountered an issue setting up your profile. Please contact support.",
+            [{ text: "OK", onPress: () => router.replace("/(auth)/login") }]
+          );
+        }
+      }
+    } catch (error) {
+      Alert.alert("Error", "An unexpected error occurred");
+      console.error("Signup error:", error);
+    } finally {
       setIsLoading(false);
-      // Redirect to login page after successful signup
-      router.replace("/(auth)/login");
-    }, 1000);
+    }
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <Box className="flex-1 bg-black">
         <StatusBar style="light" />
-        
+
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
           style={styles.keyboardView}
           keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
         >
-          <ScrollView 
+          <ScrollView
             contentContainerStyle={styles.scrollContent}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
@@ -83,14 +149,17 @@ export default function SignUpPage() {
                   <Heading size="3xl" className="text-white text-center mb-2">
                     Create Account
                   </Heading>
-                  
+
                   <Text size="md" className="text-gray-400 text-center">
                     Start taking notes today
                   </Text>
                 </VStack>
 
                 {/* Sign Up Form */}
-                <VStack space="lg" className="bg-gray-900 rounded-3xl p-6 border border-gray-800">
+                <VStack
+                  space="lg"
+                  className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
+                >
                   <VStack space="md">
                     <Text className="text-gray-300 font-medium">Full Name</Text>
                     <Input
@@ -149,21 +218,23 @@ export default function SignUpPage() {
                         className="text-white"
                         style={styles.inputField}
                       />
-                      <Pressable 
+                      <Pressable
                         onPress={() => setShowPassword(!showPassword)}
                         className="pr-3"
                       >
-                        <Ionicons 
-                          name={showPassword ? "eye-off" : "eye"} 
-                          size={20} 
-                          color="#9CA3AF" 
+                        <Ionicons
+                          name={showPassword ? "eye-off" : "eye"}
+                          size={20}
+                          color="#9CA3AF"
                         />
                       </Pressable>
                     </Input>
                   </VStack>
 
                   <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Confirm Password</Text>
+                    <Text className="text-gray-300 font-medium">
+                      Confirm Password
+                    </Text>
                     <Input
                       variant="outline"
                       size="xl"
@@ -180,14 +251,16 @@ export default function SignUpPage() {
                         className="text-white"
                         style={styles.inputField}
                       />
-                      <Pressable 
-                        onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                      <Pressable
+                        onPress={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         className="pr-3"
                       >
-                        <Ionicons 
-                          name={showConfirmPassword ? "eye-off" : "eye"} 
-                          size={20} 
-                          color="#9CA3AF" 
+                        <Ionicons
+                          name={showConfirmPassword ? "eye-off" : "eye"}
+                          size={20}
+                          color="#9CA3AF"
                         />
                       </Pressable>
                     </Input>
@@ -208,8 +281,8 @@ export default function SignUpPage() {
                         I agree to the{" "}
                         <Text className="text-white font-medium">
                           Terms of Service
-                        </Text>
-                        {" "}and{" "}
+                        </Text>{" "}
+                        and{" "}
                         <Text className="text-white font-medium">
                           Privacy Policy
                         </Text>
@@ -231,7 +304,9 @@ export default function SignUpPage() {
 
                 {/* Sign In Link */}
                 <HStack space="xs" className="justify-center">
-                  <Text className="text-gray-400">Already have an account?</Text>
+                  <Text className="text-gray-400">
+                    Already have an account?
+                  </Text>
                   <Pressable onPress={() => router.push("/(auth)/login")}>
                     <Text className="text-white font-bold underline">
                       Sign In
@@ -250,7 +325,7 @@ export default function SignUpPage() {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   keyboardView: {
     flex: 1,
@@ -260,9 +335,9 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   input: {
-    backgroundColor: '#000000',
+    backgroundColor: "#000000",
   },
   inputField: {
-    color: '#FFFFFF',
+    color: "#FFFFFF",
   } as any,
 });
