@@ -62,9 +62,6 @@ export default function LoginPage() {
       return;
     } finally {
       setIsLoading(false);
-      router.dismissAll();
-      router.replace("/(main)/(tabs)/notes");
-      return;
     }
   };
 
