@@ -67,13 +67,13 @@ export const api = {
     get: (id: string) =>
       fetchWithAuth(`/notes/${id}`),
 
-    create: (data: { title?: string; content: string; tags?: string[]; basic_stats?: any }) =>
+    create: (data: { title?: string; content: string; basic_stats?: any }) =>
       fetchWithAuth('/notes/', {
         method: 'POST',
         body: JSON.stringify(data),
       }),
 
-    update: (id: string, data: { title?: string; content?: string; tags?: string[]; basic_stats?: any }) =>
+    update: (id: string, data: { title?: string; content?: string; basic_stats?: any }) =>
       fetchWithAuth(`/notes/${id}`, {
         method: 'PUT',
         body: JSON.stringify(data),

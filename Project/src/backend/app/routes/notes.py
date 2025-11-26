@@ -14,13 +14,11 @@ router = APIRouter(prefix="/notes", tags=["notes"])
 class NoteCreate(BaseModel):
     title: Optional[str] = None
     content: str
-    tags: List[str] = []
     basic_stats: Optional[dict] = None
 
 class NoteUpdate(BaseModel):
     title: Optional[str] = None
     content: Optional[str] = None
-    tags: Optional[List[str]] = None
     basic_stats: Optional[dict] = None
 
 class NoteResponse(BaseModel):
@@ -30,18 +28,7 @@ class NoteResponse(BaseModel):
     content: str
     created_at: datetime
     updated_at: datetime
-    tags: List[str] = []
     basic_stats: Optional[dict] = None
-
-    @model_validator(mode='before')
-    @classmethod
-    def extract_tags(cls, data: Any) -> Any:
-        if isinstance(data, dict):
-            basic_stats = data.get('basic_stats') or {}
-            if 'tags' not in data:
-                # Extract tags from basic_stats, default to empty list
-                data['tags'] = basic_stats.get('tags', [])
-        return data
 
 # ---------------------------
 # Routes
@@ -103,9 +90,8 @@ async def create_note(
     if not title:
         title = "Untitled Note"
         
-    # Store tags in basic_stats
+    # Store basic_stats (empty for now if not provided)
     basic_stats = note.basic_stats or {}
-    basic_stats['tags'] = note.tags
         
     note_data = {
         "user_id": user_id,
@@ -143,12 +129,9 @@ async def update_note(
     
     update_data = note.model_dump(exclude_unset=True)
     
-    # Handle tags update
-    if 'tags' in update_data:
-        tags = update_data.pop('tags') # Remove tags from top level as it's not a column
-        current_stats['tags'] = tags
-        update_data['basic_stats'] = current_stats
-    elif 'basic_stats' in update_data:
+    # Handle basic_stats update if needed (currently just passing through what's sent)
+    if 'basic_stats' in update_data:
+        # Merge or replace? For now, let's just use what's sent if it's not None
         pass
     
     # If title is not provided but content is, should we auto-update title?

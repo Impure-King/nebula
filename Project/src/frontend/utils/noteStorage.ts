@@ -53,7 +53,6 @@ export async function saveNote(note: Note): Promise<Note> {
       const newNote = await api.notes.create({
         title: note.title,
         content: note.content,
-        tags: note.tags,
         basic_stats: (note as any).basic_stats
       });
       return newNote;
@@ -61,7 +60,6 @@ export async function saveNote(note: Note): Promise<Note> {
       const updatedNote = await api.notes.update(note.id, {
         title: note.title,
         content: note.content,
-        tags: note.tags,
         basic_stats: (note as any).basic_stats
       });
       return updatedNote;

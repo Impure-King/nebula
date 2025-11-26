@@ -34,8 +34,7 @@ export default function NoteDetailScreen() {
   const [note, setNote] = useState<Note | null>(null);
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState<string[]>([]);
-  const [newTag, setNewTag] = useState('');
+
   const [isEditMode, setIsEditMode] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [aiModalVisible, setAiModalVisible] = useState(false);
@@ -58,12 +57,10 @@ export default function NoteDetailScreen() {
           content: '',
           created_at: new Date().toISOString(),
           updated_at: new Date().toISOString(),
-          tags: [],
         };
         setNote(newNote);
         setTitle('');
         setContent('');
-        setTags([]);
         setIsEditMode(true); // Auto-enable edit mode for new notes
       } else {
         // Try to load from local storage first
@@ -73,7 +70,6 @@ export default function NoteDetailScreen() {
             const draft = JSON.parse(localData);
             setTitle(draft.title);
             setContent(draft.content);
-            if (draft.tags) setTags(draft.tags);
             console.log('Loaded draft from local storage');
           }
         } catch (error) {
@@ -88,7 +84,6 @@ export default function NoteDetailScreen() {
           if (!title && !content) {
             setTitle(existingNote.title);
             setContent(existingNote.content);
-            setTags(existingNote.tags || []);
           }
           setIsEditMode(false); // Start in read-only mode
         } else {
@@ -137,14 +132,12 @@ export default function NoteDetailScreen() {
   // Use ref to store latest values without triggering re-renders
   const titleRef = useRef(title);
   const contentRef = useRef(content);
-  const tagsRef = useRef(tags);
   const isSavingRef = useRef(false);
 
   useEffect(() => {
     titleRef.current = title;
     contentRef.current = content;
-    tagsRef.current = tags;
-  }, [title, content, tags]);
+  }, [title, content]);
 
   // Save note function with retry logic (uses refs to avoid recreating on every keystroke)
   const saveNote = useCallback(async (retryCount = 0) => {
@@ -165,7 +158,6 @@ export default function NoteDetailScreen() {
         ...note,
         title: titleRef.current,
         content: contentRef.current,
-        tags: tagsRef.current,
         updated_at: new Date().toISOString(),
       };
 
@@ -255,7 +247,6 @@ export default function NoteDetailScreen() {
       AsyncStorage.setItem(`note_draft_${note.id}`, JSON.stringify({
         title: text,
         content: contentRef.current,
-        tags: tagsRef.current,
         timestamp: new Date().toISOString(),
       })).catch(err => console.error('Error saving draft:', err));
     }
@@ -270,47 +261,12 @@ export default function NoteDetailScreen() {
       AsyncStorage.setItem(`note_draft_${note.id}`, JSON.stringify({
         title: titleRef.current,
         content: text,
-        tags: tagsRef.current,
         timestamp: new Date().toISOString(),
       })).catch(err => console.error('Error saving draft:', err));
     }
   }, [note]);
 
-  // Handle adding a tag
-  const handleAddTag = useCallback(() => {
-    const trimmedTag = newTag.trim();
-    if (trimmedTag && !tags.includes(trimmedTag)) {
-      const updatedTags = [...tags, trimmedTag];
-      setTags(updatedTags);
-      setNewTag('');
-      setIsDirty(true);
-      // Save to local storage
-      if (note) {
-        AsyncStorage.setItem(`note_draft_${note.id}`, JSON.stringify({
-          title: titleRef.current,
-          content: contentRef.current,
-          tags: updatedTags,
-          timestamp: new Date().toISOString(),
-        })).catch(err => console.error('Error saving draft:', err));
-      }
-    }
-  }, [newTag, tags, note]);
 
-  // Handle removing a tag
-  const handleRemoveTag = useCallback((tagToRemove: string) => {
-    const updatedTags = tags.filter(tag => tag !== tagToRemove);
-    setTags(updatedTags);
-    setIsDirty(true);
-    // Save to local storage
-    if (note) {
-      AsyncStorage.setItem(`note_draft_${note.id}`, JSON.stringify({
-        title: titleRef.current,
-        content: contentRef.current,
-        tags: updatedTags,
-        timestamp: new Date().toISOString(),
-      })).catch(err => console.error('Error saving draft:', err));
-    }
-  }, [tags, note]);
 
   // Handle back navigation
   const handleBack = useCallback(() => {
@@ -567,51 +523,7 @@ export default function NoteDetailScreen() {
               </TouchableOpacity>
             )}
 
-            {/* Tags Section */}
-            <View className="py-4 border-b border-gray-800">
-              <View className="flex-row flex-wrap items-center">
-                {tags.map((tag, index) => (
-                  <View
-                    key={`${tag}-${index}`}
-                    className="bg-gray-800 rounded-full px-3 py-1 mr-2 mb-2 flex-row items-center"
-                  >
-                    <Text className="text-gray-300 text-sm mr-1">{tag}</Text>
-                    {isEditMode && (
-                      <TouchableOpacity
-                        onPress={() => handleRemoveTag(tag)}
-                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                      >
-                        <Ionicons name="close-circle" size={16} color="#9CA3AF" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                ))}
 
-                {isEditMode && (
-                  <View className="flex-row items-center">
-                    <TextInput
-                      value={newTag}
-                      onChangeText={setNewTag}
-                      onSubmitEditing={handleAddTag}
-                      placeholder="Add tag..."
-                      placeholderTextColor="#6B7280"
-                      className="text-white text-sm bg-gray-900 rounded-full px-3 py-1 mr-2"
-                      style={{ minWidth: 100 }}
-                      returnKeyType="done"
-                    />
-                    {newTag.trim() && (
-                      <TouchableOpacity onPress={handleAddTag}>
-                        <Ionicons name="add-circle" size={24} color="#3B82F6" />
-                      </TouchableOpacity>
-                    )}
-                  </View>
-                )}
-
-                {!isEditMode && tags.length === 0 && (
-                  <Text className="text-gray-500 text-sm">No tags</Text>
-                )}
-              </View>
-            </View>
 
             {/* Content - editable or read-only based on mode */}
             {isEditMode ? (
