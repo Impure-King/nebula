@@ -120,7 +120,7 @@ export default function NoteDetailScreen() {
   // Save to local storage immediately on change (silently, no UI indicator)
   const saveToLocalStorage = useCallback(async () => {
     if (!note) return;
-    
+
     try {
       const draft = {
         title,
@@ -138,7 +138,8 @@ export default function NoteDetailScreen() {
   const titleRef = useRef(title);
   const contentRef = useRef(content);
   const tagsRef = useRef(tags);
-  
+  const isSavingRef = useRef(false);
+
   useEffect(() => {
     titleRef.current = title;
     contentRef.current = content;
@@ -149,11 +150,15 @@ export default function NoteDetailScreen() {
   const saveNote = useCallback(async (retryCount = 0) => {
     if (!note) return;
 
+    // Prevent concurrent saves using ref for immediate locking
+    if (isSavingRef.current) return;
+
+    isSavingRef.current = true;
     setSaveStatus('saving');
 
     try {
       // Simulate save operation
-      await new Promise(resolve => setTimeout(resolve, 500));
+      // await new Promise(resolve => setTimeout(resolve, 500)); // Removed artificial delay
 
       // Update note with new data using refs for latest values
       const updatedNote: Note = {
@@ -165,8 +170,17 @@ export default function NoteDetailScreen() {
       };
 
       // Save to storage
-      await saveNoteToStorage(updatedNote);
-      console.log('Note saved:', updatedNote);
+      const savedNote = await saveNoteToStorage(updatedNote);
+      console.log('Note saved:', savedNote);
+
+      // Update local state with the saved note (important for new notes to get real ID)
+      setNote(savedNote);
+
+      // If this was a new note, update the URL/route params so it's no longer "new"
+      if (id === 'new') {
+        router.setParams({ id: savedNote.id });
+        console.log('Updated route params to:', savedNote.id);
+      }
 
       // Clear local storage draft after successful save
       try {
@@ -227,8 +241,10 @@ export default function NoteDetailScreen() {
           ]
         );
       }
+    } finally {
+      isSavingRef.current = false;
     }
-  }, [note]);
+  }, [note, id, router]); // Added id and router to dependencies
 
   // Handle title change
   const handleTitleChange = useCallback((text: string) => {
@@ -320,47 +336,66 @@ export default function NoteDetailScreen() {
 
   // Handle delete with error handling
   const handleDelete = useCallback(async () => {
-    Alert.alert(
-      'Delete Note',
-      'Are you sure you want to delete this note? This action cannot be undone.',
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: async () => {
-            try {
-              if (note?.id) {
-                await deleteNoteFromStorage(note.id);
-                // Clear draft as well
-                await AsyncStorage.removeItem(`note_draft_${note.id}`);
-                console.log('Note deleted:', note.id);
-                router.replace('/(main)/(tabs)/notes');
-              }
-            } catch (error) {
-              console.error('Failed to delete note:', error);
-              Alert.alert(
-                'Delete Failed',
-                'Unable to delete note. Please try again.',
-                [
-                  {
-                    text: 'Try Again',
-                    onPress: () => handleDelete(),
-                  },
-                  {
-                    text: 'Cancel',
-                    style: 'cancel',
-                  },
-                ]
-              );
-            }
+    console.log('Delete button pressed');
+
+    const performDelete = async () => {
+      console.log('Delete confirmed');
+      try {
+        if (note?.id) {
+          console.log('Deleting note:', note.id);
+          await deleteNoteFromStorage(note.id);
+          // Clear draft as well
+          await AsyncStorage.removeItem(`note_draft_${note.id}`);
+          console.log('Note deleted successfully');
+          router.replace('/(main)/(tabs)/notes');
+        } else {
+          console.error('No note ID to delete');
+        }
+      } catch (error) {
+        console.error('Failed to delete note:', error);
+        // Show error alert (works fine on web usually for simple messages, or use window.alert)
+        if (Platform.OS === 'web') {
+          window.alert('Unable to delete note. Please try again.');
+        } else {
+          Alert.alert(
+            'Delete Failed',
+            'Unable to delete note. Please try again.',
+            [
+              { text: 'Try Again', onPress: () => handleDelete() },
+              { text: 'Cancel', style: 'cancel' },
+            ]
+          );
+        }
+      }
+    };
+
+    if (Platform.OS === 'web') {
+      const confirmed = window.confirm(
+        'Are you sure you want to delete this note? This action cannot be undone.'
+      );
+      if (confirmed) {
+        await performDelete();
+      } else {
+        console.log('Delete cancelled');
+      }
+    } else {
+      Alert.alert(
+        'Delete Note',
+        'Are you sure you want to delete this note? This action cannot be undone.',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => console.log('Delete cancelled'),
           },
-        },
-      ]
-    );
+          {
+            text: 'Delete',
+            style: 'destructive',
+            onPress: performDelete,
+          },
+        ]
+      );
+    }
   }, [note, router]);
 
   // Set up 30-second autosave interval
@@ -402,7 +437,7 @@ export default function NoteDetailScreen() {
     return (
       <SafeAreaView className="flex-1 bg-black" edges={['top', 'left', 'right']}>
         <StatusBar barStyle="light-content" backgroundColor="#000000" />
-        <View 
+        <View
           className="flex-1 items-center justify-center"
           accessibilityLabel="Loading note"
           accessibilityRole="progressbar"
@@ -416,195 +451,195 @@ export default function NoteDetailScreen() {
   return (
     <SafeAreaView className="flex-1 bg-black" edges={['top', 'left', 'right']}>
       <StatusBar barStyle="light-content" backgroundColor="#000000" />
-      
+
       <Animated.View style={{ flex: 1, opacity: fadeAnim }}>
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           className="flex-1"
         >
           {/* Header with back button and actions */}
-          <View 
-          className="flex-row items-center justify-between py-4 border-b border-gray-800"
-          style={{ paddingHorizontal: contentPadding }}
-        >
-          <TouchableOpacity
-            onPress={handleBack}
-            className="p-2"
-            style={{ minWidth: 44, minHeight: 44 }}
-            accessibilityLabel="Go back"
-            accessibilityRole="button"
+          <View
+            className="flex-row items-center justify-between py-4 border-b border-gray-800"
+            style={{ paddingHorizontal: contentPadding }}
           >
-            <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
-
-          <View className="flex-row items-center">
-            {/* Save indicator - only show when actively saving or just saved */}
-            {isEditMode && saveStatus !== 'idle' && (
-              <View 
-                className="flex-row items-center mr-4"
-                accessibilityLabel={saveStatus === 'saving' ? "Saving note" : "Note saved"}
-                accessibilityLiveRegion="polite"
-              >
-                {saveStatus === 'saving' ? (
-                  <>
-                    <Text className="text-gray-400 text-sm mr-2">Saving...</Text>
-                    <View className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                  </>
-                ) : (
-                  <Text className="text-gray-500 text-sm">Saved</Text>
-                )}
-              </View>
-            )}
-
-            {/* AI button */}
             <TouchableOpacity
-              onPress={toggleAIMode}
-              className="p-2 mr-2"
+              onPress={handleBack}
+              className="p-2"
               style={{ minWidth: 44, minHeight: 44 }}
-              accessibilityLabel="Toggle AI mode"
+              accessibilityLabel="Go back"
               accessibilityRole="button"
             >
-              <Ionicons 
-                name="sparkles"
-                size={24}
-                color="#FFFFFF"
-              />
-
+              <Ionicons name="arrow-back" size={24} color="#FFFFFF" />
             </TouchableOpacity>
 
-            {/* Edit/Done button */}
-            <TouchableOpacity
-              onPress={toggleEditMode}
-              className="p-2 mr-2"
-              style={{ minWidth: 44, minHeight: 44 }}
-              accessibilityLabel={isEditMode ? "Done editing" : "Edit note"}
-              accessibilityRole="button"
-            >
-              <Ionicons 
-                name={isEditMode ? "checkmark" : "create-outline"} 
-                size={24} 
-                color={isEditMode ? "#3B82F6" : "#FFFFFF"} 
-              />
-            </TouchableOpacity>
-
-            {/* Delete button */}
-            {id !== 'new' && (
-              <TouchableOpacity
-                onPress={handleDelete}
-                className="p-2"
-                style={{ minWidth: 44, minHeight: 44 }}
-                accessibilityLabel="Delete note"
-                accessibilityRole="button"
-              >
-                <Ionicons name="trash-outline" size={24} color="#EF4444" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{
-            paddingHorizontal: contentPadding,
-            maxWidth: maxContentWidth,
-            width: '100%',
-            alignSelf: 'center',
-          }}
-        >
-          {/* Title - editable or read-only based on mode */}
-          {isEditMode ? (
-            <TextInput
-              value={title}
-              onChangeText={handleTitleChange}
-              placeholder="Note title"
-              placeholderTextColor="#6B7280"
-              className="text-white text-3xl font-bold py-4 border-b border-gray-800"
-              multiline
-              accessibilityLabel="Note title"
-              accessibilityHint="Enter the title for your note"
-            />
-          ) : (
-            <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7}>
-              <Text className="text-white text-3xl font-bold py-4 border-b border-gray-800">
-                {title || 'Untitled Note'}
-              </Text>
-            </TouchableOpacity>
-          )}
-
-          {/* Tags Section */}
-          <View className="py-4 border-b border-gray-800">
-            <View className="flex-row flex-wrap items-center">
-              {tags.map((tag, index) => (
+            <View className="flex-row items-center">
+              {/* Save indicator - only show when actively saving or just saved */}
+              {isEditMode && saveStatus !== 'idle' && (
                 <View
-                  key={`${tag}-${index}`}
-                  className="bg-gray-800 rounded-full px-3 py-1 mr-2 mb-2 flex-row items-center"
+                  className="flex-row items-center mr-4"
+                  accessibilityLabel={saveStatus === 'saving' ? "Saving note" : "Note saved"}
+                  accessibilityLiveRegion="polite"
                 >
-                  <Text className="text-gray-300 text-sm mr-1">{tag}</Text>
-                  {isEditMode && (
-                    <TouchableOpacity
-                      onPress={() => handleRemoveTag(tag)}
-                      hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-                    >
-                      <Ionicons name="close-circle" size={16} color="#9CA3AF" />
-                    </TouchableOpacity>
-                  )}
-                </View>
-              ))}
-              
-              {isEditMode && (
-                <View className="flex-row items-center">
-                  <TextInput
-                    value={newTag}
-                    onChangeText={setNewTag}
-                    onSubmitEditing={handleAddTag}
-                    placeholder="Add tag..."
-                    placeholderTextColor="#6B7280"
-                    className="text-white text-sm bg-gray-900 rounded-full px-3 py-1 mr-2"
-                    style={{ minWidth: 100 }}
-                    returnKeyType="done"
-                  />
-                  {newTag.trim() && (
-                    <TouchableOpacity onPress={handleAddTag}>
-                      <Ionicons name="add-circle" size={24} color="#3B82F6" />
-                    </TouchableOpacity>
+                  {saveStatus === 'saving' ? (
+                    <>
+                      <Text className="text-gray-400 text-sm mr-2">Saving...</Text>
+                      <View className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    </>
+                  ) : (
+                    <Text className="text-gray-500 text-sm">Saved</Text>
                   )}
                 </View>
               )}
-              
-              {!isEditMode && tags.length === 0 && (
-                <Text className="text-gray-500 text-sm">No tags</Text>
+
+              {/* AI button */}
+              <TouchableOpacity
+                onPress={toggleAIMode}
+                className="p-2 mr-2"
+                style={{ minWidth: 44, minHeight: 44 }}
+                accessibilityLabel="Toggle AI mode"
+                accessibilityRole="button"
+              >
+                <Ionicons
+                  name="sparkles"
+                  size={24}
+                  color="#FFFFFF"
+                />
+
+              </TouchableOpacity>
+
+              {/* Edit/Done button */}
+              <TouchableOpacity
+                onPress={toggleEditMode}
+                className="p-2 mr-2"
+                style={{ minWidth: 44, minHeight: 44 }}
+                accessibilityLabel={isEditMode ? "Done editing" : "Edit note"}
+                accessibilityRole="button"
+              >
+                <Ionicons
+                  name={isEditMode ? "checkmark" : "create-outline"}
+                  size={24}
+                  color={isEditMode ? "#3B82F6" : "#FFFFFF"}
+                />
+              </TouchableOpacity>
+
+              {/* Delete button */}
+              {id !== 'new' && (
+                <TouchableOpacity
+                  onPress={handleDelete}
+                  className="p-2"
+                  style={{ minWidth: 44, minHeight: 44 }}
+                  accessibilityLabel="Delete note"
+                  accessibilityRole="button"
+                >
+                  <Ionicons name="trash-outline" size={24} color="#EF4444" />
+                </TouchableOpacity>
               )}
             </View>
           </View>
 
-          {/* Content - editable or read-only based on mode */}
-          {isEditMode ? (
-            <TextInput
-              value={content}
-              onChangeText={handleContentChange}
-              placeholder="Start writing... (Supports Markdown and LaTeX with $ or $$)"
-              placeholderTextColor="#6B7280"
-              className="text-white text-base leading-relaxed py-6"
-              multiline
-              textAlignVertical="top"
-              style={{ minHeight: 400 }}
-              accessibilityLabel="Note content"
-              accessibilityHint="Enter the content for your note. Supports markdown and LaTeX formatting."
-            />
-          ) : (
-            <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7} style={{ minHeight: 400 }}>
-              <View style={{ paddingTop: 24, paddingBottom: 24 }}>
-                {content ? (
-                  <MarkdownRenderer content={content} />
-                ) : (
-                  <Text className="text-gray-500 text-base">No content</Text>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps="handled"
+            contentContainerStyle={{
+              paddingHorizontal: contentPadding,
+              maxWidth: maxContentWidth,
+              width: '100%',
+              alignSelf: 'center',
+            }}
+          >
+            {/* Title - editable or read-only based on mode */}
+            {isEditMode ? (
+              <TextInput
+                value={title}
+                onChangeText={handleTitleChange}
+                placeholder="Note title"
+                placeholderTextColor="#6B7280"
+                className="text-white text-3xl font-bold py-4 border-b border-gray-800"
+                multiline
+                accessibilityLabel="Note title"
+                accessibilityHint="Enter the title for your note"
+              />
+            ) : (
+              <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7}>
+                <Text className="text-white text-3xl font-bold py-4 border-b border-gray-800">
+                  {title || 'Untitled Note'}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {/* Tags Section */}
+            <View className="py-4 border-b border-gray-800">
+              <View className="flex-row flex-wrap items-center">
+                {tags.map((tag, index) => (
+                  <View
+                    key={`${tag}-${index}`}
+                    className="bg-gray-800 rounded-full px-3 py-1 mr-2 mb-2 flex-row items-center"
+                  >
+                    <Text className="text-gray-300 text-sm mr-1">{tag}</Text>
+                    {isEditMode && (
+                      <TouchableOpacity
+                        onPress={() => handleRemoveTag(tag)}
+                        hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                      >
+                        <Ionicons name="close-circle" size={16} color="#9CA3AF" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                ))}
+
+                {isEditMode && (
+                  <View className="flex-row items-center">
+                    <TextInput
+                      value={newTag}
+                      onChangeText={setNewTag}
+                      onSubmitEditing={handleAddTag}
+                      placeholder="Add tag..."
+                      placeholderTextColor="#6B7280"
+                      className="text-white text-sm bg-gray-900 rounded-full px-3 py-1 mr-2"
+                      style={{ minWidth: 100 }}
+                      returnKeyType="done"
+                    />
+                    {newTag.trim() && (
+                      <TouchableOpacity onPress={handleAddTag}>
+                        <Ionicons name="add-circle" size={24} color="#3B82F6" />
+                      </TouchableOpacity>
+                    )}
+                  </View>
+                )}
+
+                {!isEditMode && tags.length === 0 && (
+                  <Text className="text-gray-500 text-sm">No tags</Text>
                 )}
               </View>
-            </TouchableOpacity>
-          )}
-        </ScrollView>
-      </KeyboardAvoidingView>
+            </View>
+
+            {/* Content - editable or read-only based on mode */}
+            {isEditMode ? (
+              <TextInput
+                value={content}
+                onChangeText={handleContentChange}
+                placeholder="Start writing... (Supports Markdown and LaTeX with $ or $$)"
+                placeholderTextColor="#6B7280"
+                className="text-white text-base leading-relaxed py-6"
+                multiline
+                textAlignVertical="top"
+                style={{ minHeight: 400 }}
+                accessibilityLabel="Note content"
+                accessibilityHint="Enter the content for your note. Supports markdown and LaTeX formatting."
+              />
+            ) : (
+              <TouchableOpacity onPress={toggleEditMode} activeOpacity={0.7} style={{ minHeight: 400 }}>
+                <View style={{ paddingTop: 24, paddingBottom: 24 }}>
+                  {content ? (
+                    <MarkdownRenderer content={content} />
+                  ) : (
+                    <Text className="text-gray-500 text-base">No content</Text>
+                  )}
+                </View>
+              </TouchableOpacity>
+            )}
+          </ScrollView>
+        </KeyboardAvoidingView>
       </Animated.View>
 
       {/* AI Tools Modal */}
