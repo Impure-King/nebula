@@ -11,13 +11,15 @@ app = FastAPI(
 # CORS configuration
 origins = [
     "http://localhost:3000",
-    "http://localhost:19006",  # Expo default
-    "http://localhost:8081",   # Expo Metro
+    "http://localhost:8081",
+    "http://localhost:8082",
+    "http://127.0.0.1:3000",
+    "http://127.0.0.1:8081",
 ]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
