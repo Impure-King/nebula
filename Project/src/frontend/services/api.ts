@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 const LOCAL_API_URL = 'http://localhost:8000';
 const PROD_API_URL = process.env.EXPO_PUBLIC_API_URL;
 const DEV_API_URL = process.env.EXPO_PUBLIC_DEV_API_URL;
+const __DEV__ = process.env.__DEV__;
 
 const API_URL = __DEV__ ? (DEV_API_URL || LOCAL_API_URL) : (PROD_API_URL || LOCAL_API_URL);
 
@@ -31,6 +32,7 @@ async function fetchWithAuth(endpoint: string, options: FetchOptions = {}) {
   };
 
   const url = `${API_URL}${endpoint}`;
+  console.log(`[API] API URL: ${API_URL}`);
   console.log(`[API] Fetching: ${url}`);
   console.log(`[API] Token present: ${!!token}`);
 
