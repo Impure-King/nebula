@@ -51,21 +51,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     console.log("[AuthContext] signOut() called");
-
-    // First clear state immediately
-    setSession(null);
-    setUser(null);
-
-    // Then sign out from Supabase AND force clear storage
-    await supabase.auth.signOut();
-
-    // Force clear AsyncStorage to prevent session restoration
-    const AsyncStorage = (await import('@react-native-async-storage/async-storage')).default;
-    const keys = await AsyncStorage.getAllKeys();
-    const supabaseKeys = keys.filter(key => key.startsWith('supabase') || key.includes('auth'));
-    await AsyncStorage.multiRemove(supabaseKeys);
-
-    console.log("[AuthContext] signOut() complete, cleared", supabaseKeys.length, "keys");
+    try {
+      await supabase.auth.signOut();
+      setSession(null);
+      setUser(null);
+    } catch (error) {
+      console.error("[AuthContext] Error signing out:", error);
+    }
   };
 
   return (

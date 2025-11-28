@@ -12,8 +12,16 @@ import {
 } from "@/components/ui";
 import { StatusBar } from 'expo-status-bar';
 
+import { useAuth } from "@/contexts/AuthContext";
+import { Redirect } from "expo-router";
+
 export default function LandingPage() {
   const router = useRouter();
+  const { session, loading } = useAuth();
+
+  if (!loading && session) {
+    return <Redirect href="/(app)/(tabs)/notes" />;
+  }
 
   useEffect(() => {
     console.log("[Landing Page] MOUNTED");
@@ -61,7 +69,7 @@ export default function LandingPage() {
             <Button
               size="xl"
               className="w-full bg-white rounded-xl"
-              onPress={() => router.push("/(auth)/login")}
+              onPress={() => router.push("/login")}
             >
               <ButtonText className="text-black font-semibold text-lg">
                 Sign In
@@ -72,7 +80,7 @@ export default function LandingPage() {
               size="xl"
               variant="outline"
               className="w-full border-2 border-white rounded-xl"
-              onPress={() => router.push("/(auth)/signup")}
+              onPress={() => router.push("/signup")}
             >
               <ButtonText className="text-white font-semibold text-lg">
                 Create Account
