@@ -7,6 +7,9 @@ from app.core.auth import get_current_user
 
 router = APIRouter(prefix="/ai", tags=["ai"])
 
+# Specify model name:
+model_name = "gemini-2.0-flash"
+
 # 1. Configure the AI with your Key
 api_key = os.environ.get("GEMINI_API_KEY")
 if api_key:
@@ -34,7 +37,7 @@ async def process_ai_request(
 
     try:
         # Use the 'flash' model for speed and low cost
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel(model_name)
 
         # Build the context for the AI
         prompt = f"""
@@ -58,7 +61,7 @@ async def process_ai_request(
         return AIProcessResponse(
             result=response.text,
             processedAt=datetime.utcnow().isoformat(),
-            modelUsed='gemini-1.5-flash'
+            modelUsed=model_name
         )
 
     except Exception as e:
