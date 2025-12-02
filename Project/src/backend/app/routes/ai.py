@@ -28,14 +28,14 @@ class AIProcessResponse(BaseModel):
 @router.post("/process", response_model=AIProcessResponse)
 async def process_ai_request(
     request: AIProcessRequest,
-    #current_user: dict = Depends(get_current_user) # Security Check!
+  
 ):
     if not api_key:
         raise HTTPException(status_code=503, detail="Server missing API Key")
 
     try:
         # Use the 'flash' model for speed and low cost
-        model = genai.GenerativeModel('gemini-2.5-flash')
+        model = genai.GenerativeModel('gemini-2.0-flash')
 
         # Build the context for the AI
         prompt = f"""
@@ -59,7 +59,7 @@ async def process_ai_request(
         return AIProcessResponse(
             result=response.text,
             processedAt=datetime.utcnow().isoformat(),
-            modelUsed='gemini-2.5-flash'
+            modelUsed='gemini-2.0-flash'
         )
 
     except Exception as e:
