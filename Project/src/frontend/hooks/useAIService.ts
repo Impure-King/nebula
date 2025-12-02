@@ -6,10 +6,12 @@ import { useState, useCallback } from 'react';
 const LOCAL_API_URL = 'http://localhost:8000';
 const PROD_API_URL = process.env.EXPO_PUBLIC_API_URL;
 const DEV_API_URL = process.env.EXPO_PUBLIC_DEV_API_URL;
-const __DEV__ = process.env.__DEV__;
+const __DEV__ = process.env.EXPO_PUBLIC__DEV__;
 
 // This selects the right URL based on your environment
-const API_URL = __DEV__ ? (DEV_API_URL || LOCAL_API_URL) : (PROD_API_URL || LOCAL_API_URL);
+//const API_URL = __DEV__ ? (DEV_API_URL || LOCAL_API_URL) : (PROD_API_URL || LOCAL_API_URL);
+const API_URL = DEV_API_URL;
+console.log("Using API URL:", API_URL);
 
 export interface AIProcessRequest {
   noteTitle: string;
@@ -29,7 +31,9 @@ export const useAIService = () => {
       // Send data to YOUR backend at /ai/process
       const response = await fetch(`${API_URL}/ai/process`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(request),
       });
 
@@ -39,6 +43,7 @@ export const useAIService = () => {
       }
       
       const data = await response.json();
+      console.log("AI Service Response:", data);
       return data; // This contains the 'result' from Gemini
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';

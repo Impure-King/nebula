@@ -72,6 +72,7 @@ export default function SignUpPage() {
     setIsLoading(true);
     try {
       // Step 1: Create auth account with Supabase
+      console.log('signing up with email:', email);
       const { data, error } = await supabase.auth.signUp({
         email: email.trim(),
         password: password,

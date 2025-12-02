@@ -27,8 +27,7 @@ class AIProcessResponse(BaseModel):
 # 4. The actual route handler
 @router.post("/process", response_model=AIProcessResponse)
 async def process_ai_request(
-    request: AIProcessRequest,
-    current_user: dict = Depends(get_current_user) # Security Check!
+    request: AIProcessRequest # Security Check!
 ):
     if not api_key:
         raise HTTPException(status_code=503, detail="Server missing API Key")

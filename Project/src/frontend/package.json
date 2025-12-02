@@ -19,6 +19,7 @@
     "@gluestack-ui/core": "^3.0.12",
     "@gluestack-ui/themed": "^1.1.73",
     "@gluestack-ui/utils": "^3.0.12",
+    "@google/genai": "^1.30.0",
     "@legendapp/motion": "^2.5.3",
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/bottom-tabs": "^7.4.0",
