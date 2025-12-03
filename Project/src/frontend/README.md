@@ -1,75 +1,44 @@
-# Welcome to your Expo app 👋
+# frontend
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+expo/react-native frontend for notes app.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+# easy way
 
 ```bash
-npm run reset-project
+./setup.sh
+./run.sh
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+# more specific way
 
-## Learn more
+## setup
 
-To learn more about developing your project with Expo, look at the following resources:
+1. install dependencies
+```bash
+npm install
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
-
-## Join the community
-
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
-
-## Configuration
-
-### Environment Variables
-
-Create a `.env` file in the `src/frontend` directory (copy from `.env.example`):
-
+2. setup environment
 ```bash
 cp .env.example .env
 ```
 
-Set the `EXPO_PUBLIC_API_URL` to your deployed backend URL:
+fill in `.env`:
+- `EXPO_PUBLIC_SUPABASE_URL`: your supabase url
+- `EXPO_PUBLIC_SUPABASE_ANON_KEY`: your supabase anon key
+- `EXPO_PUBLIC_API_URL`: deployed gcp backend url
+- `EXPO_PUBLIC_DEV_API_URL`: (optional) dev backend url (e.g. ngrok). defaults to `http://localhost:8000` if empty.
+- `EXPO_PUBLIC__DEV__`: (optional) set to `true` to enable dev mode. defaults to `false` if empty.
 
-```env
-EXPO_PUBLIC_API_URL=https://your-cloud-run-url.run.app
+## running
+
+start development server:
+```bash
+npx expo start
 ```
 
-### API URL Behavior
+## api url logic
 
-The app automatically switches the backend URL based on the environment:
-
-- **Development (`npx expo start`)**: Uses `http://localhost:8000` (or `10.0.2.2` on Android).
-- **Production (Builds)**: Uses the `EXPO_PUBLIC_API_URL` defined in your `.env` file.
-
-You do **not** need to manually toggle the URL for local development.
+the app automatically picks the url:
+- **dev mode** (`npx expo start`): uses `EXPO_PUBLIC_DEV_API_URL` or fallback to `http://localhost:8000`.
+- **prod mode** (builds): uses `EXPO_PUBLIC_API_URL`.

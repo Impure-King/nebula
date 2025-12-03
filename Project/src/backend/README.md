@@ -2,7 +2,14 @@
 
 fastapi backend for notes app
 
-## setup
+## setup (easy way)
+
+```bash
+./setup.sh
+./run.sh
+```
+
+## setup (specific way)
 
 1. create virtual environment
 
@@ -25,6 +32,7 @@ pip install -r requirements.txt
 SUPABASE_URL=your_supabase_project_url
 SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_KEY=your_supabase_service_role_key
+OPENAI_API_KEY=your_openai_api_key
 ```
 
 4. run database schema in supabase sql editor
@@ -37,8 +45,6 @@ SUPABASE_SERVICE_KEY=your_supabase_service_role_key
 
 ```bash
 uvicorn app.main:app --reload --host 0.0.0.0
-# OR use the helper script:
-# ./run.sh
 ```
 
 server runs on `http://0.0.0.0:8000` (accessible via your LAN IP)
@@ -105,7 +111,7 @@ prerequisites:
 
 ```bash
 gcloud run services update backend-api \
-  --update-env-vars SUPABASE_URL=your_url,SUPABASE_ANON_KEY=your_key,SUPABASE_SERVICE_KEY=your_service_key \
+  --update-env-vars SUPABASE_URL=your_url,SUPABASE_ANON_KEY=your_key,SUPABASE_SERVICE_KEY=your_service_key,OPENAI_API_KEY=your_openai_key \
   --project your_project_id \
   --region us-central1
 ```

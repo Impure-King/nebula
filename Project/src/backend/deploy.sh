@@ -34,10 +34,10 @@ gcloud run deploy $SERVICE_NAME \
     --project $PROJECT_ID \
     --region $REGION \
     --allow-unauthenticated \
-    --set-env-vars "SUPABASE_URL=PLACEHOLDER_URL,SUPABASE_ANON_KEY=PLACEHOLDER_KEY"
+    --set-env-vars "SUPABASE_URL=PLACEHOLDER_URL,SUPABASE_ANON_KEY=PLACEHOLDER_KEY,OPENAI_API_KEY=PLACEHOLDER_KEY"
 
 echo ""
 echo "Deployment complete!"
 echo "NOTE: You need to update the environment variables in the Cloud Run console or via command line with your actual secrets."
 echo "You can do this by running:"
-echo "gcloud run services update $SERVICE_NAME --update-env-vars SUPABASE_URL=...,SUPABASE_ANON_KEY=... --project $PROJECT_ID --region $REGION"
+echo "gcloud run services update $SERVICE_NAME --update-env-vars SUPABASE_URL=...,SUPABASE_ANON_KEY=...,OPENAI_API_KEY=... --project $PROJECT_ID --region $REGION"
