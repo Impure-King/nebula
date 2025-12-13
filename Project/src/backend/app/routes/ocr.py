@@ -24,7 +24,7 @@ async def extract_text_from_image(file: UploadFile = File(...)):
         client = Mistral(api_key=api_key)
         
         # Call Mistral API
-        ocr_response = await client.ocr.process(
+        ocr_response = client.ocr.process(
             model="mistral-ocr-latest",
             document={
                 "type": "image_url",
