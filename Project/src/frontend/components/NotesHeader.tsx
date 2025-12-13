@@ -17,7 +17,7 @@ export default function NotesHeader({ onNewNote, onScan }: NotesHeaderProps) {
 
       <View className="flex-row gap-2">
         <Pressable
-          className="bg-gray-800 rounded-xl px-4 flex-row items-center justify-center border border-gray-700"
+          className="bg-gray-800 rounded-xl flex-row items-center justify-center border border-gray-700"
           style={{ minHeight: 44, width: 44 }}
           onPress={onScan}
           android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
