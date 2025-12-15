@@ -12,12 +12,15 @@ export default function SemanticSearchToggle({ isSemantic, onToggle }: SemanticS
         <Pressable
             onPress={() => onToggle(!isSemantic)}
             className={`items-center justify-center rounded-xl border h-12 w-12 ${isSemantic
-                ? 'bg-blue-900/30 border-blue-500'
-                : 'bg-gray-900 border-gray-700'
+                ? 'border-blue-500'
+                : ''
                 }`}
+            style={isSemantic ? { backgroundColor: '#E0F2FE', borderColor: '#00A4F2' } : { backgroundColor: '#F5F5F4', borderColor: '#E6E4E3' }}
             accessibilityRole="switch"
             accessibilityLabel={`Switch to ${isSemantic ? 'keyword' : 'semantic'} search`}
             accessibilityState={{ checked: isSemantic }}
+        
+
         >
             <Ionicons
                 name={isSemantic ? "sparkles" : "sparkles-outline"}
