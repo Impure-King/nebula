@@ -2,25 +2,40 @@
 **Date:** 2025-12-15
 **Status:** ALL PASSING
 
-| `app/routes/users.py` | 100% | Unit & Integration covered. |
-| `app/main.py` | 100% | App initialization covered. |
-| **TOTAL** | **46%** | Needs more tests for `ai.py` (59%) and `auth.py` (27%). |
+### Executive Summary
 
-## 3. Frontend Test Results
-The frontend testing infrastructure utilizes `Jest` with `@testing-library/react-native` for component rendering and `ts-jest` for utility logic.
-
-### Summary
--   **Framework**: `Jest`
--   **Total Tests**: 19
--   **Result**: ALL PASS
--   **Line Coverage**: 53.19%
+| Metric | Backend (Pytest) | Frontend (Jest) |
+| :--- | :--- | :--- |
+| **Total Test Suites** | 12 | 6 |
+| **Total Tests** | 34 | 26 |
+| **Snapshots** | N/A | 4 |
+| **Status** | ✅ 34 Passed | ✅ 26 Passed |
+| **Code Coverage** | **73%** | **72%** |
+| **Duration** | 0.42s | 4.68s |
 
 ### Detailed Breakdown
-| Module | Line Coverage | Notes |
-| :--- | :---: | :--- |
-| `utils/noteUtils.ts` | 92.59% | High confidence in utility logic. |
-| `components/NoteCard.tsx` | N/A | Component logic implicit in snapshot. |
-| **TOTAL** | **53.19%** | Snapshot tests exercise rendering but not all interactive branches. |
+
+#### Backend (Python/FastAPI)
+- **Framework**: `pytest`, `pytest-cov`, `httpx`
+- **Total Tests**: 34
+- **Results**: 34 passed, 0 failed
+- **Coverage Highlights**:
+  - `app/routes/users.py`: 100%
+  - `app/routes/ocr.py`: 87%
+  - `app/routes/profiles.py`: 83%
+  - `app/routes/ai.py`: 84%
+  - `app/core/chunking.py`: 96%
+  - `app/core/auth.py`: 85%
+
+#### Frontend (React Native/Expo)
+- **Framework**: `jest`, `@testing-library/react-native`
+- **Total Tests**: 26
+- **Results**: 26 passed, 0 failed
+- **Coverage Highlights**:
+  - `hooks/useAIService.ts`: 100%
+  - `components/NoteCard.tsx`: 100%
+  - `components/NotesHeader.tsx`: 85%
+  - `components/AIToolsSection.tsx`: 90%
 
 ## 4. Environment & Configuration
 -   **Backend**: Python 3.13.5, FastAPI, Pytest 8.0.0
