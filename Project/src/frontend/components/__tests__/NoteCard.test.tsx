@@ -14,30 +14,6 @@ jest.mock('@expo/vector-icons', () => ({
     Ionicons: 'Ionicons',
 }));
 
-jest.mock('react-native', () => {
-    const React = require('react');
-    return {
-        View: (props: any) => React.createElement('View', props, props.children),
-        Text: (props: any) => React.createElement('Text', props, props.children),
-        Pressable: (props: any) => {
-            const children = typeof props.children === 'function'
-                ? props.children({ pressed: false })
-                : props.children;
-            return React.createElement('Pressable', props, children);
-        },
-        ScrollView: (props: any) => React.createElement('ScrollView', props, props.children),
-        Animated: {
-            View: (props: any) => React.createElement('Animated.View', props, props.children),
-            timing: () => ({ start: jest.fn() }),
-            spring: () => ({ start: jest.fn() }),
-            parallel: () => ({ start: jest.fn() }),
-            Value: function () { return { interpolate: jest.fn() } },
-        },
-        Platform: { OS: 'ios', select: (obj: any) => obj.ios },
-        StyleSheet: { create: (obj: any) => obj, flatten: (obj: any) => obj },
-    };
-});
-
 
 const mockNote: Note = {
     id: '1',
