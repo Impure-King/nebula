@@ -31,14 +31,14 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // icefox Base Colors
+        // Base Colors
         base: {
           100: 'var(--color-base-100)',
           200: 'var(--color-base-200)',
           300: 'var(--color-base-300)',
           content: 'var(--color-base-content)',
         },
-        // icefox Brand Colors (overriding existing primary/secondary)
+        // Brand Colors
         primary: 'var(--color-primary)',
         'primary-content': 'var(--color-primary-content)',
         secondary: 'var(--color-secondary)',
@@ -47,7 +47,7 @@ module.exports = {
         'accent-content': 'var(--color-accent-content)',
         neutral: 'var(--color-neutral)',
         'neutral-content': 'var(--color-neutral-content)',
-        // icefox Semantic Colors (overriding existing semantic colors)
+        // Semantic Colors
         info: 'var(--color-info)',
         'info-content': 'var(--color-info-content)',
         success: 'var(--color-success)',
