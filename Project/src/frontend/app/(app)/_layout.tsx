@@ -1,11 +1,12 @@
 import { Stack, useRouter } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, useColorScheme } from "react-native";
 import { useEffect } from "react";
 
 export default function MainLayout() {
   const { session, loading } = useAuth();
   const router = useRouter();
+  const colorScheme = useColorScheme();
 
   useEffect(() => {
     if (!loading && !session) {
@@ -17,7 +18,7 @@ export default function MainLayout() {
   // Show loading screen while checking session or redirecting
   if (loading || !session) {
     return (
-      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: "#000" }}>
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center", backgroundColor: colorScheme === 'dark' ? '#000000' : '#FAFAFA' }}>
         <ActivityIndicator size="large" color="#3B82F6" />
       </View>
     );
@@ -28,7 +29,7 @@ export default function MainLayout() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        contentStyle: { backgroundColor: '#000000' },
+        contentStyle: { backgroundColor: colorScheme === 'dark' ? '#000000' : '#FAFAFA' },
       }}
     />
   );

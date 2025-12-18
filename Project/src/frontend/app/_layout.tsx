@@ -27,7 +27,7 @@ function RootLayoutNav() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#020617", justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#3b82f6" />
       </View>
     );
@@ -39,7 +39,7 @@ function RootLayoutNav() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: colorScheme === "dark" ? "#020617" : "#ffffff" },
+            contentStyle: { backgroundColor: colorScheme === "dark" ? "#000000" : "#FAFAFA" },
             animation: "fade",
           }}
         />
@@ -53,7 +53,7 @@ function RootLayoutNav() {
               bottom: 0,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: colorScheme === "dark" ? "rgba(2, 6, 23, 0.9)" : "rgba(255, 255, 255, 0.9)",
+              backgroundColor: colorScheme === "dark" ? "rgba(0, 0, 0, 0.9)" : "rgba(250, 250, 250, 0.9)",
               zIndex: 999,
             }}
           >
