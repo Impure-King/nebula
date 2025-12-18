@@ -11,7 +11,7 @@ export default function NebulaLogo({ size = 120 }: NebulaLogoProps) {
   const glowId = `glow-${id}`;
 
   return (
-    <Svg viewBox="0 0 200 200" width={size} height={size}>
+    <Svg viewBox="30 30 140 140" width={size} height={size}>
       <Defs>
         <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           <Stop offset="0%" stopColor="#1e3a8a" stopOpacity={1} />

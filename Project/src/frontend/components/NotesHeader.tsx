@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, Pressable, Alert } from 'react-native';
 import { Plus } from 'lucide-react-native';
+import NebulaLogo from './NebulaLogo';
 
 interface NotesHeaderProps {
   onNewNote: () => void;
@@ -31,9 +32,12 @@ export default function NotesHeader({ onNewNote, onScan }: NotesHeaderProps) {
 
   return (
     <View className="flex-row items-center justify-between mb-6">
-      <Text className="text-base-content text-3xl font-bold font-inter tracking-tight">
-        Nebula
-      </Text>
+      <div className="inline-flex items-center">
+        <NebulaLogo size={50} />
+        <Text className="text-base-content text-3xl font-bold font-inter tracking-tight">
+          Nebula
+        </Text>
+      </div>
 
       <Pressable
         className="bg-primary rounded-xl px-4 flex-row items-center shadow-lg shadow-blue-900/20"

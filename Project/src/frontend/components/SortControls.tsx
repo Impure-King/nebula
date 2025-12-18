@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
-import { Filter } from 'lucide-react-native';
+import { ArrowDownUp } from 'lucide-react-native';
 import { SortOption } from '../types/note';
 
 interface SortControlsProps {
@@ -28,14 +28,14 @@ export default function SortControls({ sortBy, onSortChange }: SortControlsProps
   return (
     <>
       <Pressable
-        className="bg-base-200 rounded-xl border border-base-300 items-center justify-center h-12 w-12"
+        className="bg-base-200 rounded-2xl border border-base-300 items-center justify-center h-12 w-12"
         onPress={() => setIsModalVisible(true)}
         accessibilityLabel={`Sort by ${currentOption?.label}`}
         accessibilityRole="button"
         accessibilityHint="Opens sort options menu"
         android_ripple={{ color: 'rgba(59, 130, 246, 0.1)' }}
       >
-        <Filter size={20} color="#94a3b8" />
+        <ArrowDownUp size={20} color="#94a3b8" />
       </Pressable>
 
       <Modal

@@ -373,18 +373,23 @@ export default function NotesScreen() {
         className="px-3 mb-4"
         style={{ width: `${cardWidth}%` }}
       >
-        <View className="bg-gray-900 rounded-xl p-4 border border-blue-900/50 h-44">
-          <Text className="text-blue-400 font-bold text-lg mb-2" numberOfLines={1}>
+        <View className="bg-base-200 rounded-2xl p-4 border border-base-300 h-44 shadow-sm relative overflow-hidden">
+          {/* Subtle accent line similar to NoteCard */}
+          <View className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
+          
+          <Text className="text-primary font-bold font-inter text-lg mb-2" numberOfLines={1}>
             {originalNote?.title || 'Note Fragment'}
           </Text>
-          <Text className="text-gray-300 text-sm leading-5" numberOfLines={4}>
+          <Text className="text-base-content/70 text-sm leading-5 font-inter" numberOfLines={4}>
             {item.content}
           </Text>
           <View className="mt-auto flex-row justify-between items-center">
-            <Text className="text-gray-500 text-xs">
-              Match: {Math.round(item.similarity * 100)}%
-            </Text>
-            <Text className="text-gray-600 text-xs">
+            <View className="flex-row items-center bg-primary/10 px-2 py-0.5 rounded-full">
+              <Text className="text-primary text-xs font-bold font-inter">
+                {Math.round(item.similarity * 100)}% Match
+              </Text>
+            </View>
+            <Text className="text-base-content/40 text-xs font-inter">
               Part {item.chunk_index + 1}/{item.total_chunks}
             </Text>
           </View>
@@ -427,8 +432,8 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel={`No notes found for ${searchQuery}`}
         >
-          <Text className="text-gray-400 text-lg mb-2">No notes found</Text>
-          <Text className="text-gray-500 text-sm">
+          <Text className="text-base-content/50 text-lg mb-2 font-inter font-medium">No notes found</Text>
+          <Text className="text-base-content/40 text-sm font-inter">
             No results for "{searchQuery}"
           </Text>
         </View>
@@ -442,8 +447,8 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel="No notes yet. Create your first note to get started"
         >
-          <Text className="text-gray-400 text-lg mb-2">No notes yet</Text>
-          <Text className="text-gray-500 text-sm">
+          <Text className="text-base-content/50 text-lg mb-2 font-inter font-medium">No notes yet</Text>
+          <Text className="text-base-content/40 text-sm font-inter">
             Create your first note to get started
           </Text>
         </View>
@@ -479,8 +484,8 @@ export default function NotesScreen() {
   }, [numColumns]);
 
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <SafeAreaView className="flex-1 bg-base-100" edges={['top', 'left', 'right']}>
+      <StatusBar barStyle="light-content" backgroundColor="#020617" />
 
       <View className="flex-1 pt-4" style={{ paddingHorizontal: horizontalPadding }}>
         {/* Header with title and New Note button */}
@@ -518,8 +523,8 @@ export default function NotesScreen() {
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              tintColor="#3B82F6"
-              colors={['#3B82F6']}
+              tintColor="#3b82f6"
+              colors={['#3b82f6']}
               accessibilityLabel="Pull to refresh notes"
             />
           }
