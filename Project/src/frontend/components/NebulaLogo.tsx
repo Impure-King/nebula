@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Svg, Circle, Defs, LinearGradient, Stop, Filter, FeGaussianBlur, FeMerge, FeMergeNode } from 'react-native-svg';
 
 interface NebulaLogoProps {
@@ -6,16 +6,20 @@ interface NebulaLogoProps {
 }
 
 export default function NebulaLogo({ size = 120 }: NebulaLogoProps) {
+  const id = useId().replace(/:/g, "");
+  const gradientId = `nebula-gradient-${id}`;
+  const glowId = `glow-${id}`;
+
   return (
     <Svg viewBox="0 0 200 200" width={size} height={size}>
       <Defs>
-        <LinearGradient id="nebula-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <LinearGradient id={gradientId} x1="0%" y1="0%" x2="100%" y2="100%">
           <Stop offset="0%" stopColor="#1e3a8a" stopOpacity={1} />
           <Stop offset="50%" stopColor="#3b82f6" stopOpacity={1} />
           <Stop offset="100%" stopColor="#60a5fa" stopOpacity={1} />
         </LinearGradient>
 
-        <Filter id="glow">
+        <Filter id={glowId}>
           <FeGaussianBlur stdDeviation="2" result="coloredBlur"/>
           <FeMerge>
             <FeMergeNode in="coloredBlur"/>
@@ -25,11 +29,11 @@ export default function NebulaLogo({ size = 120 }: NebulaLogoProps) {
       </Defs>
 
       {/* Main nebula shape - abstract cosmic form */}
-      <Circle cx="100" cy="100" r="45" fill="url(#nebula-gradient)" opacity={0.4} filter="url(#glow)"/>
-      <Circle cx="100" cy="100" r="30" fill="url(#nebula-gradient)" opacity={0.8}/>
+      <Circle cx="100" cy="100" r="45" fill={`url(#${gradientId})`} opacity={0.4} filter={`url(#${glowId})`}/>
+      <Circle cx="100" cy="100" r="30" fill={`url(#${gradientId})`} opacity={0.8}/>
 
       {/* Central star/core */}
-      <Circle cx="100" cy="100" r="8" fill="#ffffff" filter="url(#glow)"/>
+      <Circle cx="100" cy="100" r="8" fill="#ffffff" filter={`url(#${glowId})`}/>
 
       {/* Orbital elements - minimal geometric accents */}
       <Circle cx="140" cy="80" r="4" fill="#60a5fa" opacity={0.8}/>

@@ -24,7 +24,7 @@ function RootLayoutNav() {
 
   if (!fontsLoaded) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#000", justifyContent: "center", alignItems: "center" }}>
+      <View style={{ flex: 1, backgroundColor: "#020617", justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#3b82f6" />
       </View>
     );
@@ -36,7 +36,7 @@ function RootLayoutNav() {
         <Stack
           screenOptions={{
             headerShown: false,
-            contentStyle: { backgroundColor: "#000000" },
+            contentStyle: { backgroundColor: "#020617" }, // Dark Mode Base (Slate 950)
             animation: "fade",
           }}
         />
@@ -50,11 +50,11 @@ function RootLayoutNav() {
               bottom: 0,
               justifyContent: "center",
               alignItems: "center",
-              backgroundColor: "#000",
+              backgroundColor: "rgba(2, 6, 23, 0.9)", // Slate 950 heavily dimmed
               zIndex: 999,
             }}
           >
-            <ActivityIndicator size="large" color="#3B82F6" />
+            <ActivityIndicator size="large" color="#3b82f6" />
           </View>
         )}
       </SafeAreaProvider>

@@ -51,9 +51,9 @@
      ============================================== */
 
   /* Base - Deep Space */
-  --color-base-100: 15 23 42;         /* Slate 950 */
-  --color-base-200: 30 41 59;         /* Slate 800 */
-  --color-base-300: 51 65 85;         /* Slate 700 */
+  --color-base-100: 2 6 23;           /* Slate 950 - Absolute Void */
+  --color-base-200: 15 23 42;         /* Slate 900 - Card Surface */
+  --color-base-300: 30 41 59;         /* Slate 800 - Borders */
   --color-base-content: 248 250 252;  /* Slate 50 */
   
   /* Brand - Nebula Blue (Dark) */
