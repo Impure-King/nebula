@@ -33,29 +33,60 @@ module.exports = {
       colors: {
         // Base Colors
         base: {
-          100: 'var(--color-base-100)',
-          200: 'var(--color-base-200)',
-          300: 'var(--color-base-300)',
-          content: 'var(--color-base-content)',
+          100: 'rgb(var(--color-base-100) / <alpha-value>)',
+          200: 'rgb(var(--color-base-200) / <alpha-value>)',
+          300: 'rgb(var(--color-base-300) / <alpha-value>)',
+          content: 'rgb(var(--color-base-content) / <alpha-value>)',
         },
         // Brand Colors
-        primary: 'var(--color-primary)',
-        'primary-content': 'var(--color-primary-content)',
-        secondary: 'var(--color-secondary)',
-        'secondary-content': 'var(--color-secondary-content)',
-        accent: 'var(--color-accent)',
-        'accent-content': 'var(--color-accent-content)',
-        neutral: 'var(--color-neutral)',
-        'neutral-content': 'var(--color-neutral-content)',
+        primary: {
+          DEFAULT: 'rgb(var(--color-primary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-primary-content) / <alpha-value>)',
+        },
+        'primary-content': 'rgb(var(--color-primary-content) / <alpha-value>)',
+        
+        secondary: {
+          DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-secondary-content) / <alpha-value>)',
+        },
+        'secondary-content': 'rgb(var(--color-secondary-content) / <alpha-value>)',
+        
+        accent: {
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+          foreground: 'rgb(var(--color-accent-content) / <alpha-value>)',
+        },
+        'accent-content': 'rgb(var(--color-accent-content) / <alpha-value>)',
+        
+        neutral: {
+          DEFAULT: 'rgb(var(--color-neutral) / <alpha-value>)',
+          foreground: 'rgb(var(--color-neutral-content) / <alpha-value>)',
+        },
+        'neutral-content': 'rgb(var(--color-neutral-content) / <alpha-value>)',
+        
         // Semantic Colors
-        info: 'var(--color-info)',
-        'info-content': 'var(--color-info-content)',
-        success: 'var(--color-success)',
-        'success-content': 'var(--color-success-content)',
-        warning: 'var(--color-warning)',
-        'warning-content': 'var(--color-warning-content)',
-        error: 'var(--color-error)',
-        'error-content': 'var(--color-error-content)',
+        info: {
+          DEFAULT: 'rgb(var(--color-info) / <alpha-value>)',
+          foreground: 'rgb(var(--color-info-content) / <alpha-value>)',
+        },
+        'info-content': 'rgb(var(--color-info-content) / <alpha-value>)',
+        
+        success: {
+          DEFAULT: 'rgb(var(--color-success) / <alpha-value>)',
+          foreground: 'rgb(var(--color-success-content) / <alpha-value>)',
+        },
+        'success-content': 'rgb(var(--color-success-content) / <alpha-value>)',
+        
+        warning: {
+          DEFAULT: 'rgb(var(--color-warning) / <alpha-value>)',
+          foreground: 'rgb(var(--color-warning-content) / <alpha-value>)',
+        },
+        'warning-content': 'rgb(var(--color-warning-content) / <alpha-value>)',
+        
+        error: {
+          DEFAULT: 'rgb(var(--color-error) / <alpha-value>)',
+          foreground: 'rgb(var(--color-error-content) / <alpha-value>)',
+        },
+        'error-content': 'rgb(var(--color-error-content) / <alpha-value>)',
         // Legacy colors (keeping for backward compatibility)
         'primary-legacy': {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
@@ -219,7 +250,7 @@ module.exports = {
         jakarta: ['var(--font-plus-jakarta-sans)'],
         roboto: ['var(--font-roboto)'],
         code: ['var(--font-source-code-pro)'],
-        inter: ['var(--font-inter)'],
+        inter: ['Inter_400Regular', 'Inter_500Medium', 'Inter_600SemiBold', 'Inter_700Bold', 'sans-serif'],
         'space-mono': ['var(--font-space-mono)'],
       },
       fontWeight: {

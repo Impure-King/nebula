@@ -43,19 +43,19 @@ function NoteCard({ note, onPress }: NoteCardProps) {
   return (
     <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
       <Pressable
-        className="bg-gray-900 rounded-3xl p-4 border border-gray-800"
+        className="bg-base-200 rounded-2xl p-5 border border-base-300"
         style={{ minHeight: 160 }}
         onPress={() => onPress(note.id)}
-        android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}
+        android_ripple={{ color: 'rgba(59, 130, 246, 0.1)' }} // Blue 500 ripple
         accessibilityLabel={`Note: ${note.title || 'Untitled Note'}`}
         accessibilityRole="button"
         accessibilityHint={`Opens note. Last updated ${formattedDate}.`}
       >
         {({ pressed }) => (
-          <View style={{ opacity: pressed ? 0.7 : 1 }}>
+          <View style={{ opacity: pressed ? 0.9 : 1 }}>
             {/* Title - truncated to 2 lines */}
             <Text
-              className="text-white font-semibold text-lg mb-2"
+              className="text-base-content font-inter font-semibold text-lg mb-2 leading-tight"
               numberOfLines={2}
               ellipsizeMode="tail"
               accessibilityRole="header"
@@ -65,18 +65,17 @@ function NoteCard({ note, onPress }: NoteCardProps) {
 
             {/* Content preview - truncated to 3 lines */}
             <Text
-              className="text-gray-400 text-sm mb-3"
+              className="text-base-content/70 font-inter text-sm mb-4 leading-relaxed"
               numberOfLines={3}
               ellipsizeMode="tail"
             >
-              {contentPreview || 'No content'}
+              {contentPreview || 'No content description available.'}
             </Text>
 
             {/* Date */}
-            <Text className="text-gray-500 text-xs mb-2">
+            <Text className="text-primary font-inter font-medium text-xs">
               {formattedDate}
             </Text>
-
 
           </View>
         )}

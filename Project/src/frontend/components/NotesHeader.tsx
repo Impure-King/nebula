@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, Pressable, Alert } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Plus } from 'lucide-react-native';
 
 interface NotesHeaderProps {
   onNewNote: () => void;
@@ -31,12 +31,12 @@ export default function NotesHeader({ onNewNote, onScan }: NotesHeaderProps) {
 
   return (
     <View className="flex-row items-center justify-between mb-6">
-      <Text className="text-white text-3xl font-bold">
-        Notes
+      <Text className="text-base-content text-3xl font-bold font-inter tracking-tight">
+        Nebula
       </Text>
 
       <Pressable
-        className="bg-blue-500 rounded-xl px-4 flex-row items-center"
+        className="bg-primary rounded-xl px-4 flex-row items-center shadow-lg shadow-blue-900/20"
         style={{ minHeight: 44 }}
         onPress={handleCreatePress}
         android_ripple={{ color: 'rgba(255, 255, 255, 0.2)' }}
@@ -46,9 +46,9 @@ export default function NotesHeader({ onNewNote, onScan }: NotesHeaderProps) {
       >
         {({ pressed }) => (
           <View style={{ opacity: pressed ? 0.8 : 1 }} className="flex-row items-center">
-            <Ionicons name="add" size={20} color="white" />
-            <Text className="text-white font-semibold ml-1">
-              Create
+            <Plus size={20} color="white" strokeWidth={2.5} />
+            <Text className="text-white font-semibold font-inter ml-1.5">
+              New Note
             </Text>
           </View>
         )}

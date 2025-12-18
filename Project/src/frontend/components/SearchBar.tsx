@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Search, Sparkles, XCircle } from 'lucide-react-native';
 
 interface SearchBarProps {
   value: string;
@@ -24,18 +24,18 @@ export default function SearchBar({
   };
 
   return (
-    <View className="bg-gray-900 rounded-xl border border-gray-700 flex-row items-center px-4" style={{ minHeight: 48 }}>
+    <View className="bg-base-200 rounded-xl border border-base-300 flex-row items-center px-4" style={{ minHeight: 48 }}>
       <Pressable onPress={onSearch} hitSlop={8}>
-        <Ionicons name="search" size={20} color="#9CA3AF" />
+        <Search size={20} color="#94a3b8" />
       </Pressable>
       <TextInput
-        className="flex-1 text-white ml-3 text-base"
+        className="flex-1 text-base-content font-inter ml-3 text-base"
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSearch}
         returnKeyType="search"
         placeholder={placeholder}
-        placeholderTextColor="#6B7280"
+        placeholderTextColor="#94a3b8"
         accessibilityLabel="Search notes"
         accessibilityHint="Type to search notes by title"
       />
@@ -48,10 +48,10 @@ export default function SearchBar({
           accessibilityLabel={`Switch to ${isSemantic ? 'keyword' : 'semantic'} search`}
           accessibilityState={{ checked: isSemantic }}
         >
-          <Ionicons
-            name={isSemantic ? "sparkles" : "sparkles-outline"}
+          <Sparkles
             size={20}
-            color={isSemantic ? "#60A5FA" : "#6B7280"}
+            color={isSemantic ? "#60a5fa" : "#94a3b8"}
+            fill={isSemantic ? "#60a5fa" : "transparent"} // Fill effect for active state
           />
         </Pressable>
       )}
@@ -63,7 +63,7 @@ export default function SearchBar({
           accessibilityLabel="Clear search"
           accessibilityRole="button"
         >
-          <Ionicons name="close-circle" size={20} color="#6B7280" />
+          <XCircle size={20} color="#94a3b8" />
         </Pressable>
       )}
     </View>
