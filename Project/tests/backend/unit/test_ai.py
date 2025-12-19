@@ -27,7 +27,7 @@ async def test_process_ai_request_success():
             result = await process_ai_request(request)
             
             assert result.result == "AI Result"
-            assert result.modelUsed == "gemini-2.0-flash"
+            assert result.modelUsed == "gemini-2.5-flash"
 
 @pytest.mark.asyncio
 async def test_process_ai_request_no_key():
