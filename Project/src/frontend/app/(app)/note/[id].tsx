@@ -360,7 +360,7 @@ export default function NoteDetailScreen() {
                 onChangeText={handleContentChange}
                 placeholder="Start writing..."
                 placeholderTextColor="#64748b"
-                className="text-base-content text-sm leading-7 py-6 font-mono"
+                className="text-base-content/80 text-sm leading-7 py-6 font-mono"
                 multiline
                 textAlignVertical="top"
                 style={{ minHeight: 300 }}

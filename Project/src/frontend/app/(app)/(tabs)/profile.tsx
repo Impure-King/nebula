@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../services/api';
-import { LogOut, User, Save, Mail } from 'lucide-react-native';
+import { LogOut, User, UserRoundCheck, Mail } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const { signOut, user } = useAuth();
@@ -136,7 +136,7 @@ export default function ProfileScreen() {
               <ActivityIndicator color="#FFFFFF" />
             ) : (
               <>
-                <Save size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                <UserRoundCheck size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
                 <Text className="font-bold text-white">
                   Save Changes
                 </Text>

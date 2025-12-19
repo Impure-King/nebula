@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, useColorScheme } from 'react-native';
 import { WebView } from 'react-native-webview';
 
 interface MarkdownRendererProps {
@@ -8,6 +8,17 @@ interface MarkdownRendererProps {
 
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const [webViewHeight, setWebViewHeight] = useState(500);
+  const colorScheme = useColorScheme();
+  const isDark = colorScheme === 'dark';
+
+  // Colors matching global.css
+  const theme = {
+    background: isDark ? '0 0 0' : '250 250 250',
+    content: isDark ? '250 250 250' : '24 24 27',
+    primary: isDark ? '59 130 246' : '37 99 235',
+    base200: isDark ? '15 15 15' : '244 244 245',
+    base300: isDark ? '39 39 42' : '228 228 231',
+  };
 
   const html = `
 <!DOCTYPE html>
@@ -19,6 +30,13 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
   <style>
+    :root {
+      --color-background: rgb(${theme.background});
+      --color-content: rgb(${theme.content});
+      --color-primary: rgb(${theme.primary});
+      --color-base-200: rgb(${theme.base200});
+      --color-base-300: rgb(${theme.base300});
+    }
     * {
       margin: 0;
       padding: 0;
@@ -26,10 +44,10 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     }
     body {
       background-color: transparent;
-      color: #FFFFFF;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      color: var(--color-content);
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       font-size: 16px;
-      line-height: 1.5;
+      line-height: 1.6;
       padding: 0;
       margin: 0;
       overflow-x: hidden;
@@ -37,123 +55,104 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     #content {
       padding: 0;
     }
-    h1 { 
-      font-size: 32px; 
-      font-weight: bold; 
-      margin: 16px 0; 
-      line-height: 1.25;
-      color: #FFFFFF;
+    h1, h2, h3, h4, h5, h6 {
+      color: var(--color-content);
+      font-weight: 700;
+      margin-top: 24px;
+      margin-bottom: 12px;
+      line-height: 1.3;
     }
-    h2 { 
-      font-size: 24px; 
-      font-weight: bold; 
-      margin: 16px 0 12px; 
-      line-height: 1.33;
-      color: #FFFFFF;
-    }
-    h3 { 
-      font-size: 20px; 
-      font-weight: bold; 
-      margin: 12px 0 8px; 
-      line-height: 1.4;
-      color: #FFFFFF;
-    }
-    h4 { 
-      font-size: 18px; 
-      font-weight: bold; 
-      margin: 12px 0 8px;
-      color: #FFFFFF;
-    }
-    h5 { 
-      font-size: 16px; 
-      font-weight: bold; 
-      margin: 8px 0;
-      color: #FFFFFF;
-    }
-    h6 { 
-      font-size: 14px; 
-      font-weight: bold; 
-      margin: 8px 0;
-      color: #FFFFFF;
-    }
+    h1 { font-size: 28px; border-bottom: 1px solid var(--color-base-300); padding-bottom: 8px; }
+    h2 { font-size: 24px; }
+    h3 { font-size: 20px; }
+    h4 { font-size: 18px; }
+    
     p { 
-      margin: 0 0 12px;
-      color: #FFFFFF;
+      margin-bottom: 16px;
+      color: var(--color-content);
     }
     strong {
-      font-weight: bold;
+      font-weight: 700;
     }
     em {
       font-style: italic;
     }
     code {
-      background-color: #1F2937;
-      color: #3B82F6;
-      padding: 2px 4px;
+      background-color: var(--color-base-200);
+      color: var(--color-primary);
+      padding: 2px 6px;
       border-radius: 4px;
-      font-family: 'Courier New', monospace;
+      font-family: 'JetBrains Mono', monospace;
       font-size: 14px;
+      border: 1px solid var(--color-base-300);
     }
     pre {
-      background-color: #1F2937;
-      color: #E5E7EB;
-      padding: 12px;
-      border-radius: 8px;
+      background-color: var(--color-base-200);
+      color: var(--color-content);
+      padding: 16px;
+      border-radius: 12px;
       overflow-x: auto;
-      margin: 8px 0 12px;
+      margin: 16px 0;
+      border: 1px solid var(--color-base-300);
     }
     pre code {
       background: none;
       color: inherit;
       padding: 0;
+      border: none;
     }
     blockquote {
-      background-color: #1F2937;
-      border-left: 4px solid #3B82F6;
-      padding: 8px 12px;
-      margin: 8px 0 12px;
-      color: #FFFFFF;
+      background-color: var(--color-base-200);
+      border-left: 4px solid var(--color-primary);
+      padding: 12px 16px;
+      margin: 16px 0;
+      color: var(--color-content);
+      border-radius: 4px 12px 12px 4px;
+      font-style: italic;
     }
     ul, ol { 
-      margin: 8px 0 12px; 
+      margin: 16px 0; 
       padding-left: 24px;
-      color: #FFFFFF;
     }
     li { 
-      margin-bottom: 4px;
-      color: #FFFFFF;
+      margin-bottom: 8px;
     }
     a { 
-      color: #3B82F6; 
-      text-decoration: underline;
+      color: var(--color-primary); 
+      text-decoration: none;
+      font-weight: 600;
     }
     hr { 
-      background-color: #374151; 
-      height: 1px; 
-      border: none; 
-      margin: 16px 0;
+      border: none;
+      border-top: 1px solid var(--color-base-300);
+      margin: 24px 0;
     }
     table { 
       border-collapse: collapse; 
-      margin: 8px 0 12px; 
+      margin: 16px 0; 
       width: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--color-base-300);
     }
     th, td { 
-      border: 1px solid #374151; 
-      padding: 8px;
-      color: #FFFFFF;
+      border: 1px solid var(--color-base-300); 
+      padding: 12px;
+      text-align: left;
     }
     th { 
-      font-weight: bold;
+      background-color: var(--color-base-200);
+      font-weight: 700;
     }
     .katex { 
-      font-size: 1.2em;
-      color: #FFFFFF;
+      font-size: 1.15em;
     }
     .katex-display { 
-      margin: 12px 0; 
-      overflow-x: auto; 
-      overflow-y: hidden;
+      margin: 20px 0; 
+      padding: 10px;
+      background-color: var(--color-base-200);
+      border-radius: 12px;
+      overflow-x: auto;
     }
   </style>
 </head>
@@ -212,7 +211,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           try {
             const data = JSON.parse(event.nativeEvent.data);
             if (data.height) {
-              setWebViewHeight(data.height + 20);
+              setWebViewHeight(data.height + 30);
             }
           } catch (e) {
             console.error('Error parsing message:', e);
@@ -232,6 +231,7 @@ const styles = StyleSheet.create({
   },
   webView: {
     backgroundColor: 'transparent',
+    opacity: 0.99, // Fix for some Android rendering issues
     width: '100%',
   },
 });
