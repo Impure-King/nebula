@@ -1,7 +1,8 @@
 import React, { memo, useEffect, useRef } from 'react';
-import { View, Text, Pressable, ScrollView, Animated } from 'react-native';
+import { View, Text, Pressable, Animated } from 'react-native';
 import { Note } from '../types/note';
 import { formatRelativeTime } from '../utils/noteUtils';
+import { Clock2 } from 'lucide-react-native';
 
 interface NoteCardProps {
   note: Note;
@@ -43,43 +44,40 @@ function NoteCard({ note, onPress }: NoteCardProps) {
   return (
     <Animated.View style={{ opacity: fadeAnim, transform: [{ scale: scaleAnim }] }}>
       <Pressable
-        className="bg-gray-900 rounded-3xl p-4 border border-gray-800"
+        className="bg-base-200 rounded-2xl p-5 border border-base-300"
         style={{ minHeight: 160 }}
         onPress={() => onPress(note.id)}
-        android_ripple={{ color: 'rgba(255, 255, 255, 0.1)' }}
+        android_ripple={{ color: 'rgba(59, 130, 246, 0.1)' }} // Blue 500 ripple
         accessibilityLabel={`Note: ${note.title || 'Untitled Note'}`}
         accessibilityRole="button"
-        accessibilityHint={`Opens note. Last updated ${formattedDate}.`}
+        accessibilityHint={`Opens note. Last updated ${formattedDate}.`} // Updated hint to use formatDate
       >
-        {({ pressed }) => (
-          <View style={{ opacity: pressed ? 0.7 : 1 }}>
-            {/* Title - truncated to 2 lines */}
-            <Text
-              className="text-white font-semibold text-lg mb-2"
-              numberOfLines={2}
-              ellipsizeMode="tail"
-              accessibilityRole="header"
-            >
-              {note.title || 'Untitled Note'}
-            </Text>
+        {/* Removed the outer {({ pressed }) => ... } wrapper as the new structure doesn't use it */}
+        <View>
+          <Text
+            className="text-base-content text-lg font-bold mb-2 leading-tight" // Updated font-semibold to font-bold
+            numberOfLines={1} // Changed to 1 line
+            ellipsizeMode="tail"
+            accessibilityRole="header"
+          >
+            {note.title || 'Untitled Note'}
+          </Text>
 
-            {/* Content preview - truncated to 3 lines */}
-            <Text
-              className="text-gray-400 text-sm mb-3"
-              numberOfLines={3}
-              ellipsizeMode="tail"
-            >
-              {contentPreview || 'No content'}
-            </Text>
+          <Text
+            className="text-base-content/30 text-sm leading-relaxed" // Changed /70 to /40
+            numberOfLines={4} // Changed to 4 lines
+            ellipsizeMode="tail"
+          >
+            {note.content || 'No content...'} {/* Used note.content directly */}
+          </Text>
+        </View>
 
-            {/* Date */}
-            <Text className="text-gray-500 text-xs mb-2">
-              {formattedDate}
-            </Text>
-
-
-          </View>
-        )}
+        <View className="flex-row items-center justify-end mt-auto pt-4">
+          <Clock2 size={16} color={"#507ebfff"}/>
+          <Text className="text-primary text-xs ml-1">
+            {formattedDate}
+          </Text>
+        </View>
       </Pressable>
     </Animated.View>
   );

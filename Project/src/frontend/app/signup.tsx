@@ -1,23 +1,6 @@
 import { useState } from "react";
 import { useRouter, Redirect } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Box,
-  VStack,
-  HStack,
-  Center,
-  Heading,
-  Text,
-  Button,
-  ButtonText,
-  Input,
-  InputField,
-  Pressable,
-  Checkbox,
-  CheckboxIndicator,
-  CheckboxIcon,
-  CheckboxLabel,
-} from "@/components/ui";
 import { StatusBar } from "expo-status-bar";
 import {
   KeyboardAvoidingView,
@@ -26,10 +9,16 @@ import {
   StyleSheet,
   Alert,
   SafeAreaView,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { ArrowLeft, Eye, EyeOff, Check } from "lucide-react-native";
 import { supabase } from "@/lib/supabase";
 import { api } from "@/services/api";
+import NebulaLogo from "@/components/NebulaLogo";
 
 export default function SignUpPage() {
   const router = useRouter();
@@ -39,7 +28,6 @@ export default function SignUpPage() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { session, loading } = useAuth();
 
@@ -51,11 +39,6 @@ export default function SignUpPage() {
     // Validation
     if (!name || !email || !password || !confirmPassword) {
       Alert.alert("Error", "Please fill in all fields");
-      return;
-    }
-
-    if (!agreeToTerms) {
-      Alert.alert("Terms Required", "Please agree to the terms and conditions");
       return;
     }
 
@@ -106,8 +89,6 @@ export default function SignUpPage() {
             ]
           );
         } catch (profileError) {
-          // If profile creation fails, we should probably warn the user
-          // The auth account is created, but the profile is missing
           console.error("Profile creation failed:", profileError);
           Alert.alert(
             "Account Created",
@@ -125,226 +106,156 @@ export default function SignUpPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Box className="flex-1 bg-black">
-        <StatusBar style="light" />
+    <SafeAreaView className="flex-1 bg-base-100">
+      <StatusBar style="light" />
 
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={styles.keyboardView}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Back Button - Inside ScrollView */}
-            <Box className="px-6 pt-4 pb-4">
-              <Pressable onPress={() => router.back()}>
-                <HStack space="sm" className="items-center">
-                  <Ionicons name="arrow-back" size={24} color="white" />
-                  <Text className="text-white">Back</Text>
-                </HStack>
-              </Pressable>
-            </Box>
+          {/* Back Button */}
+          <View className="px-6 pt-4">
+            <Pressable 
+              onPress={() => router.back()}
+              className="flex-row items-center p-2 -ml-2 rounded-lg active:bg-base-200/50"
+            >
+              <ArrowLeft size={24} color="#94a3b8" />
+              <Text className="text-base-content/70 ml-2 text-base font-medium">Back</Text>
+            </Pressable>
+          </View>
 
-            <Box className="px-6 pb-8">
-              <VStack space="2xl" className="w-full max-w-md mx-auto">
-                {/* Header */}
-                <VStack space="md" className="items-center">
-                  <Heading size="3xl" className="text-white text-center mb-2">
-                    Create Account
-                  </Heading>
+          <View className="flex-1 px-8 pt-6 pb-12">
+            
+            {/* Header */}
+            <View className="mb-8 items-center">
+              <NebulaLogo size={150} />
+              <Text className="text-base-content text-3xl font-bold tracking-tight">
+                Create Account
+              </Text>
+              <Text className="text-base-content/60 text-base mt-2">
+                Start taking notes with Nebula today
+              </Text>
+            </View>
 
-                  <Text size="md" className="text-gray-400 text-center">
-                    Start taking notes today
-                  </Text>
-                </VStack>
+            {/* Form */}
+            <View className="space-y-5">
+              
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Full Name
+                </Text>
+                <TextInput
+                  placeholder="Enter your full name"
+                  placeholderTextColor="#94a3b8"
+                  value={name}
+                  onChangeText={setName}
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
+                />
+              </View>
 
-                {/* Sign Up Form */}
-                <VStack
-                  space="lg"
-                  className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
-                >
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Full Name</Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Enter your full name"
-                        placeholderTextColor="#6B7280"
-                        value={name}
-                        onChangeText={setName}
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                    </Input>
-                  </VStack>
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Email
+                </Text>
+                <TextInput
+                  placeholder="Enter your email"
+                  placeholderTextColor="#94a3b8"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
+                />
+              </View>
 
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Email</Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Enter your email"
-                        placeholderTextColor="#6B7280"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                    </Input>
-                  </VStack>
-
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Password</Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Create a password"
-                        placeholderTextColor="#6B7280"
-                        value={password}
-                        onChangeText={setPassword}
-                        type={showPassword ? "text" : "password"}
-                        autoCapitalize="none"
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                      <Pressable
-                        onPress={() => setShowPassword(!showPassword)}
-                        className="pr-3"
-                      >
-                        <Ionicons
-                          name={showPassword ? "eye-off" : "eye"}
-                          size={20}
-                          color="#9CA3AF"
-                        />
-                      </Pressable>
-                    </Input>
-                  </VStack>
-
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">
-                      Confirm Password
-                    </Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Confirm your password"
-                        placeholderTextColor="#6B7280"
-                        value={confirmPassword}
-                        onChangeText={setConfirmPassword}
-                        type={showConfirmPassword ? "text" : "password"}
-                        autoCapitalize="none"
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                      <Pressable
-                        onPress={() =>
-                          setShowConfirmPassword(!showConfirmPassword)
-                        }
-                        className="pr-3"
-                      >
-                        <Ionicons
-                          name={showConfirmPassword ? "eye-off" : "eye"}
-                          size={20}
-                          color="#9CA3AF"
-                        />
-                      </Pressable>
-                    </Input>
-                  </VStack>
-
-                  {/* Terms and Conditions */}
-                  <HStack space="sm" className="items-start">
-                    <Checkbox
-                      value="terms"
-                      isChecked={agreeToTerms}
-                      onChange={setAgreeToTerms}
-                      className="mt-1"
-                    >
-                      <CheckboxIndicator>
-                        <CheckboxIcon />
-                      </CheckboxIndicator>
-                      <CheckboxLabel className="text-gray-400 text-sm flex-1">
-                        I agree to the{" "}
-                        <Text className="text-white font-medium">
-                          Terms of Service
-                        </Text>{" "}
-                        and{" "}
-                        <Text className="text-white font-medium">
-                          Privacy Policy
-                        </Text>
-                      </CheckboxLabel>
-                    </Checkbox>
-                  </HStack>
-
-                  <Button
-                    size="xl"
-                    className="w-full bg-white rounded-xl mt-4"
-                    onPress={handleSignUp}
-                    isDisabled={isLoading}
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Password
+                </Text>
+                <View className="relative">
+                  <TextInput
+                    placeholder="Create a password"
+                    placeholderTextColor="#94a3b8"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-3.5"
                   >
-                    <ButtonText className="text-black font-semibold text-lg">
-                      {isLoading ? "Creating Account..." : "Create Account"}
-                    </ButtonText>
-                  </Button>
-                </VStack>
-
-                {/* Sign In Link */}
-                <HStack space="xs" className="justify-center">
-                  <Text className="text-gray-400">
-                    Already have an account?
-                  </Text>
-                  <Pressable onPress={() => router.push("/login")}>
-                    <Text className="text-white font-bold underline">
-                      Sign In
-                    </Text>
+                    {showPassword ? (
+                      <EyeOff size={20} color="#94a3b8" />
+                    ) : (
+                      <Eye size={20} color="#94a3b8" />
+                    )}
                   </Pressable>
-                </HStack>
-              </VStack>
-            </Box>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </Box>
+                </View>
+              </View>
+
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Confirm Password
+                </Text>
+                <View className="relative">
+                  <TextInput
+                    placeholder="Confirm your password"
+                    placeholderTextColor="#94a3b8"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    secureTextEntry={!showConfirmPassword}
+                    autoCapitalize="none"
+                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                  />
+                  <Pressable
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-4 top-3.5"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={20} color="#94a3b8" />
+                    ) : (
+                      <Eye size={20} color="#94a3b8" />
+                    )}
+                  </Pressable>
+                </View>
+              </View>
+
+              <Pressable
+                onPress={handleSignUp}
+                disabled={isLoading}
+                className={`w-full bg-primary rounded-xl h-14 justify-center items-center shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all mt-4 ${isLoading ? 'opacity-70' : ''}`}
+                android_ripple={{ color: 'rgba(255,255,255,0.2)' }}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">
+                    Create Account
+                  </Text>
+                )}
+              </Pressable>
+
+            </View>
+
+            {/* Sign In Link */}
+            <View className="flex-row justify-center mt-8 mb-4">
+              <Text className="text-base-content/60">Already have an account? </Text>
+              <Pressable onPress={() => router.push("/login")}>
+                <Text className="text-primary font-bold">Sign In</Text>
+              </Pressable>
+            </View>
+
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#000000",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    paddingBottom: 40,
-  },
-  input: {
-    backgroundColor: "#000000",
-  },
-  inputField: {
-    color: "#FFFFFF",
-  } as any,
-});
+

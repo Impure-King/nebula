@@ -33,6 +33,8 @@ jest.mock('react-native', () => {
         Platform: { OS: 'ios', select: (obj) => obj.ios },
         StyleSheet: { create: (obj) => obj, flatten: (obj) => obj, hairlineWidth: 1 },
         useWindowDimensions: () => ({ width: 375, height: 812 }),
+        useColorScheme: () => 'light',
+        Touchable: { Mixin: {} },
         Alert: { alert: jest.fn() },
     };
 });
@@ -46,3 +48,55 @@ jest.mock('@expo/vector-icons', () => ({
     MaterialIcons: 'MaterialIcons',
     FontAwesome: 'FontAwesome',
 }));
+
+jest.mock('react-native-webview', () => {
+    const { View } = require('react-native');
+    return {
+        WebView: (props) => View(props),
+    };
+});
+
+jest.mock('react-native-svg', () => {
+  const { View } = require('react-native');
+  return {
+    Svg: View,
+    Circle: View,
+    Ellipse: View,
+    G: View,
+    Text: View,
+    TSpan: View,
+    TextPath: View,
+    Path: View,
+    Polygon: View,
+    Polyline: View,
+    Line: View,
+    Rect: View,
+    Use: View,
+    Image: View,
+    Symbol: View,
+    Defs: View,
+    LinearGradient: View,
+    RadialGradient: View,
+    Stop: View,
+    ClipPath: View,
+    Pattern: View,
+    Mask: View,
+    Marker: View,
+    Filter: View,
+    FeGaussianBlur: View,
+    FeMerge: View,
+    FeMergeNode: View,
+  };
+});
+
+jest.mock('lucide-react-native', () => {
+  return new Proxy({}, {
+    get: (target, prop) => {
+      const MockIcon = (props) => {
+        const React = require('react');
+        return React.createElement('View', { ...props, testID: `lucide-${String(prop)}` });
+      };
+      return MockIcon;
+    }
+  });
+});

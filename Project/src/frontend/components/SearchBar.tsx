@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, TextInput, Pressable } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { Search, Sparkles, XCircle } from 'lucide-react-native';
 
 interface SearchBarProps {
   value: string;
@@ -24,48 +24,50 @@ export default function SearchBar({
   };
 
   return (
-    <View className="bg-gray-900 rounded-xl border border-gray-700 flex-row items-center px-4" style={{ minHeight: 48 }}>
+    <View className="bg-base-200 rounded-full border border-base-300 flex-row items-center px-4 mr-4" style={{ minHeight: 40 }}>
       <Pressable onPress={onSearch} hitSlop={8}>
-        <Ionicons name="search" size={20} color="#9CA3AF" />
+        <Search size={20} color="#94a3b8" />
       </Pressable>
       <TextInput
-        className="flex-1 text-white ml-3 text-base"
+        className="flex-1 text-base-content ml-2 mr-2 text-base min-w-0"
         value={value}
         onChangeText={onChangeText}
         onSubmitEditing={onSearch}
         returnKeyType="search"
         placeholder={placeholder}
-        placeholderTextColor="#6B7280"
+        placeholderTextColor="#94a3b8"
         accessibilityLabel="Search notes"
         accessibilityHint="Type to search notes by title"
+        textAlignVertical="center"
+        style={{ paddingVertical: 0, height: '100%' }}
       />
-      {onToggleSemantic && (
-        <Pressable
-          onPress={() => onToggleSemantic(!isSemantic)}
-          hitSlop={8}
-          className="ml-2"
-          accessibilityRole="switch"
-          accessibilityLabel={`Switch to ${isSemantic ? 'keyword' : 'semantic'} search`}
-          accessibilityState={{ checked: isSemantic }}
-        >
-          <Ionicons
-            name={isSemantic ? "sparkles" : "sparkles-outline"}
-            size={20}
-            color={isSemantic ? "#60A5FA" : "#6B7280"}
-          />
-        </Pressable>
-      )}
-      {value.length > 0 && (
-        <Pressable
-          onPress={handleClear}
-          hitSlop={12}
-          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
-          accessibilityLabel="Clear search"
-          accessibilityRole="button"
-        >
-          <Ionicons name="close-circle" size={20} color="#6B7280" />
-        </Pressable>
-      )}
+      <View className="flex-row items-center gap-2 shrink-0">
+        {onToggleSemantic && (
+          <Pressable
+            onPress={() => onToggleSemantic(!isSemantic)}
+            hitSlop={8}
+            accessibilityRole="switch"
+            accessibilityLabel={`Switch to ${isSemantic ? 'keyword' : 'semantic'} search`}
+            accessibilityState={{ checked: isSemantic }}
+          >
+            <Sparkles
+              size={20}
+              color={isSemantic ? "#60a5fa" : "#94a3b8"}
+              fill={isSemantic ? "#60a5fa" : "transparent"}
+            />
+          </Pressable>
+        )}
+        {value.length > 0 && (
+          <Pressable
+            onPress={handleClear}
+            hitSlop={8}
+            accessibilityLabel="Clear search"
+            accessibilityRole="button"
+          >
+            <XCircle size={18} color="#94a3b8" />
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 }

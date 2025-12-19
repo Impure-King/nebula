@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  darkMode: process.env.DARK_MODE ? process.env.DARK_MODE : 'class',
+  darkMode: 'media',
   content: [
     './app/**/*.{html,js,jsx,ts,tsx,mdx}',
     './components/**/*.{html,js,jsx,ts,tsx,mdx}',
@@ -31,31 +31,62 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // icefox Base Colors
+        // Base Colors
         base: {
-          100: 'var(--color-base-100)',
-          200: 'var(--color-base-200)',
-          300: 'var(--color-base-300)',
-          content: 'var(--color-base-content)',
+          100: 'rgb(var(--color-base-100) / <alpha-value>)',
+          200: 'rgb(var(--color-base-200) / <alpha-value>)',
+          300: 'rgb(var(--color-base-300) / <alpha-value>)',
+          content: 'rgb(var(--color-base-content) / <alpha-value>)',
         },
-        // icefox Brand Colors (overriding existing primary/secondary)
-        primary: 'var(--color-primary)',
-        'primary-content': 'var(--color-primary-content)',
-        secondary: 'var(--color-secondary)',
-        'secondary-content': 'var(--color-secondary-content)',
-        accent: 'var(--color-accent)',
-        'accent-content': 'var(--color-accent-content)',
-        neutral: 'var(--color-neutral)',
-        'neutral-content': 'var(--color-neutral-content)',
-        // icefox Semantic Colors (overriding existing semantic colors)
-        info: 'var(--color-info)',
-        'info-content': 'var(--color-info-content)',
-        success: 'var(--color-success)',
-        'success-content': 'var(--color-success-content)',
-        warning: 'var(--color-warning)',
-        'warning-content': 'var(--color-warning-content)',
-        error: 'var(--color-error)',
-        'error-content': 'var(--color-error-content)',
+        // Brand Colors
+        primary: {
+          DEFAULT: 'rgb(var(--color-primary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-primary-content) / <alpha-value>)',
+        },
+        'primary-content': 'rgb(var(--color-primary-content) / <alpha-value>)',
+        
+        secondary: {
+          DEFAULT: 'rgb(var(--color-secondary) / <alpha-value>)',
+          foreground: 'rgb(var(--color-secondary-content) / <alpha-value>)',
+        },
+        'secondary-content': 'rgb(var(--color-secondary-content) / <alpha-value>)',
+        
+        accent: {
+          DEFAULT: 'rgb(var(--color-accent) / <alpha-value>)',
+          foreground: 'rgb(var(--color-accent-content) / <alpha-value>)',
+        },
+        'accent-content': 'rgb(var(--color-accent-content) / <alpha-value>)',
+        
+        neutral: {
+          DEFAULT: 'rgb(var(--color-neutral) / <alpha-value>)',
+          foreground: 'rgb(var(--color-neutral-content) / <alpha-value>)',
+        },
+        'neutral-content': 'rgb(var(--color-neutral-content) / <alpha-value>)',
+        
+        // Semantic Colors
+        info: {
+          DEFAULT: 'rgb(var(--color-info) / <alpha-value>)',
+          foreground: 'rgb(var(--color-info-content) / <alpha-value>)',
+        },
+        'info-content': 'rgb(var(--color-info-content) / <alpha-value>)',
+        
+        success: {
+          DEFAULT: 'rgb(var(--color-success) / <alpha-value>)',
+          foreground: 'rgb(var(--color-success-content) / <alpha-value>)',
+        },
+        'success-content': 'rgb(var(--color-success-content) / <alpha-value>)',
+        
+        warning: {
+          DEFAULT: 'rgb(var(--color-warning) / <alpha-value>)',
+          foreground: 'rgb(var(--color-warning-content) / <alpha-value>)',
+        },
+        'warning-content': 'rgb(var(--color-warning-content) / <alpha-value>)',
+        
+        error: {
+          DEFAULT: 'rgb(var(--color-error) / <alpha-value>)',
+          foreground: 'rgb(var(--color-error-content) / <alpha-value>)',
+        },
+        'error-content': 'rgb(var(--color-error-content) / <alpha-value>)',
         // Legacy colors (keeping for backward compatibility)
         'primary-legacy': {
           0: 'rgb(var(--color-primary-0)/<alpha-value>)',
@@ -214,13 +245,15 @@ module.exports = {
       },
       fontFamily: {
         heading: undefined,
-        body: undefined,
-        mono: undefined,
-        jakarta: ['var(--font-plus-jakarta-sans)'],
+        body: ['PlusJakartaSans_400Regular'],
+        mono: ['JetBrainsMono_400Regular'],
+        sans: ['PlusJakartaSans_400Regular'], // Default sans
+        bold: ['PlusJakartaSans_700Bold'], // Short command for bold
+        semibold: ['PlusJakartaSans_600SemiBold'], // Short command for semibold
+        jakarta: ['PlusJakartaSans_400Regular'],
         roboto: ['var(--font-roboto)'],
         code: ['var(--font-source-code-pro)'],
-        inter: ['var(--font-inter)'],
-        'space-mono': ['var(--font-space-mono)'],
+        'sans-serif': ['sans-serif'],
       },
       fontWeight: {
         extrablack: '950',

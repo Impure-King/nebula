@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, Pressable, Modal, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { ArrowDownUp } from 'lucide-react-native';
 import { SortOption } from '../types/note';
 
 interface SortControlsProps {
@@ -28,13 +28,14 @@ export default function SortControls({ sortBy, onSortChange }: SortControlsProps
   return (
     <>
       <Pressable
-        className="bg-gray-900 rounded-xl border border-gray-700 items-center justify-center h-12 w-12"
+        className="bg-base-200 rounded-2xl border border-base-300 items-center justify-center h-10 w-10"
         onPress={() => setIsModalVisible(true)}
         accessibilityLabel={`Sort by ${currentOption?.label}`}
         accessibilityRole="button"
         accessibilityHint="Opens sort options menu"
+        android_ripple={{ color: 'rgba(59, 130, 246, 0.1)' }}
       >
-        <Ionicons name="filter" size={20} color="#9CA3AF" />
+        <ArrowDownUp size={20} color="#94a3b8" />
       </Pressable>
 
       <Modal
@@ -50,11 +51,11 @@ export default function SortControls({ sortBy, onSortChange }: SortControlsProps
           accessibilityLabel="Close sort menu"
           accessibilityRole="button"
         >
-          <View className="bg-gray-900 rounded-2xl border border-gray-700 mx-6 overflow-hidden">
+          <View className="bg-base-200 rounded-2xl border border-base-300 mx-4 overflow-hidden shadow-2xl">
             {SORT_OPTIONS.map((option) => (
               <Pressable
                 key={option.value}
-                className={`px-6 ${sortBy === option.value ? 'bg-gray-800' : ''}`}
+                className={`px-4 ${sortBy === option.value ? 'bg-base-300' : ''}`}
                 style={{ minHeight: 56 }}
                 onPress={() => handleOptionSelect(option.value)}
                 accessibilityLabel={option.label}
@@ -62,7 +63,7 @@ export default function SortControls({ sortBy, onSortChange }: SortControlsProps
                 accessibilityState={{ selected: sortBy === option.value }}
               >
                 <View style={{ flex: 1, justifyContent: 'center' }}>
-                  <Text className={`text-base ${sortBy === option.value ? 'text-white font-semibold' : 'text-gray-300'}`}>
+                  <Text className={`text-base ${sortBy === option.value ? 'text-primary font-semibold' : 'text-base-content/80'}`}>
                     {option.label}
                   </Text>
                 </View>

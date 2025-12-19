@@ -373,18 +373,23 @@ export default function NotesScreen() {
         className="px-3 mb-4"
         style={{ width: `${cardWidth}%` }}
       >
-        <View className="bg-gray-900 rounded-xl p-4 border border-blue-900/50 h-44">
-          <Text className="text-blue-400 font-bold text-lg mb-2" numberOfLines={1}>
+        <View className="bg-base-200 rounded-2xl p-4 border border-base-300 h-44 shadow-sm relative overflow-hidden">
+          {/* Subtle accent line similar to NoteCard */}
+          <View className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
+          
+          <Text className="text-primary font-bold text-lg mb-2" numberOfLines={1}>
             {originalNote?.title || 'Note Fragment'}
           </Text>
-          <Text className="text-gray-300 text-sm leading-5" numberOfLines={4}>
+          <Text className="text-base-content/70 text-sm leading-5" numberOfLines={4}>
             {item.content}
           </Text>
           <View className="mt-auto flex-row justify-between items-center">
-            <Text className="text-gray-500 text-xs">
-              Match: {Math.round(item.similarity * 100)}%
-            </Text>
-            <Text className="text-gray-600 text-xs">
+            <View className="flex-row items-center bg-primary/10 px-2 py-0.5 rounded-full">
+              <Text className="text-primary text-xs font-bold">
+                {Math.round(item.similarity * 100)}% Match
+              </Text>
+            </View>
+            <Text className="text-base-content/40 text-xs">
               Part {item.chunk_index + 1}/{item.total_chunks}
             </Text>
           </View>
@@ -427,8 +432,8 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel={`No notes found for ${searchQuery}`}
         >
-          <Text className="text-gray-400 text-lg mb-2">No notes found</Text>
-          <Text className="text-gray-500 text-sm">
+          <Text className="text-base-content/50 text-lg mb-2 font-medium">No notes found</Text>
+          <Text className="text-base-content/40 text-sm">
             No results for "{searchQuery}"
           </Text>
         </View>
@@ -442,8 +447,8 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel="No notes yet. Create your first note to get started"
         >
-          <Text className="text-gray-400 text-lg mb-2">No notes yet</Text>
-          <Text className="text-gray-500 text-sm">
+          <Text className="text-base-content/50 text-lg mb-2 font-medium">No notes yet</Text>
+          <Text className="text-base-content/40 text-sm">
             Create your first note to get started
           </Text>
         </View>
@@ -479,25 +484,27 @@ export default function NotesScreen() {
   }, [numColumns]);
 
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={['top', 'left', 'right']}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <SafeAreaView className="flex-1 bg-base-100" edges={['top', 'left', 'right']}>
+      <StatusBar barStyle="light-content" backgroundColor="#020617" />
 
-      <View className="flex-1 pt-4" style={{ paddingHorizontal: horizontalPadding }}>
+      <View className="flex-1 pt-4">
         {/* Header with title and New Note button */}
-        <NotesHeader onNewNote={handleCreateNote} onScan={handleScanPress} />
+        <View style={{ paddingHorizontal: horizontalPadding }}>
+          <NotesHeader onNewNote={handleCreateNote} onScan={handleScanPress} />
 
-        <View className="mb-4 flex-row items-center space-x-2">
-          <View className="flex-1">
-            <SearchBar
-              value={searchQuery}
-              onChangeText={handleSearchChange}
-              onSearch={handleSearchSubmit}
-              placeholder={isSemanticSearch ? "Search by meaning..." : "Search notes..."}
-              isSemantic={isSemanticSearch}
-              onToggleSemantic={handleToggleSemantic}
-            />
+          <View className="mb-4 flex-row items-center space-x-2">
+            <View className="flex-1">
+              <SearchBar
+                value={searchQuery}
+                onChangeText={handleSearchChange}
+                onSearch={handleSearchSubmit}
+                placeholder={isSemanticSearch ? "Search by meaning..." : "Search notes..."}
+                isSemantic={isSemanticSearch}
+                onToggleSemantic={handleToggleSemantic}
+              />
+            </View>
+            <SortControls sortBy={sortBy} onSortChange={handleSortChange} />
           </View>
-          <SortControls sortBy={sortBy} onSortChange={handleSortChange} />
         </View>
 
         {/* Notes grid with responsive column layout */}
@@ -512,14 +519,15 @@ export default function NotesScreen() {
           contentContainerStyle={{
             flexGrow: 1,
             paddingBottom: 20,
+            paddingHorizontal: horizontalPadding,
           }}
           ListEmptyComponent={renderEmptyState}
           refreshControl={
             <RefreshControl
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
-              tintColor="#3B82F6"
-              colors={['#3B82F6']}
+              tintColor="#3b82f6"
+              colors={['#3b82f6']}
               accessibilityLabel="Pull to refresh notes"
             />
           }

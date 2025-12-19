@@ -14,7 +14,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../contexts/AuthContext';
 import { api } from '../../../services/api';
-import { Ionicons } from '@expo/vector-icons';
+import { LogOut, User, UserRoundCheck, Mail } from 'lucide-react-native';
 
 export default function ProfileScreen() {
   const { signOut, user } = useAuth();
@@ -73,8 +73,8 @@ export default function ProfileScreen() {
 
   if (loading) {
     return (
-      <SafeAreaView className="flex-1 bg-black items-center justify-center">
-        <ActivityIndicator size="large" color="#3B82F6" />
+      <SafeAreaView className="flex-1 bg-base-100 items-center justify-center">
+        <ActivityIndicator size="large" color="#3b82f6" />
       </SafeAreaView>
     );
   }
@@ -82,58 +82,78 @@ export default function ProfileScreen() {
   const hasChanges = fullName !== initialFullName;
 
   return (
-    <SafeAreaView className="flex-1 bg-black" edges={['top']}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <SafeAreaView className="flex-1 bg-base-100" edges={['top']}>
+      <StatusBar barStyle="light-content" backgroundColor="#020617" />
 
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         className="flex-1"
       >
-        <ScrollView contentContainerStyle={{ padding: 24 }}>
-          <View className="items-center mb-8">
-            <View className="w-24 h-24 bg-gray-800 rounded-full items-center justify-center mb-4">
-              <Text className="text-4xl text-gray-400 font-bold">
-                {fullName ? fullName.charAt(0).toUpperCase() : user?.email?.charAt(0).toUpperCase() || '?'}
-              </Text>
+        <ScrollView contentContainerStyle={{ padding: 24, flexGrow: 1 }}>
+          
+          {/* Header */}
+          <Text className="text-base-content text-center text-3xl font-bold mb-8">Profile</Text>
+
+          {/* Avatar Section */}
+          <View className="items-center mb-10">
+            <View className="w-28 h-28 bg-primary/20 rounded-full items-center justify-center mb-4 border border-primary/30 shadow-sm">
+              <User size={40} color="#3b82f6" />
             </View>
-            <Text className="text-white text-xl font-bold">{fullName || 'User'}</Text>
-            <Text className="text-gray-500">{user?.email}</Text>
+            <Text className="text-base-content text-xl font-bold">{fullName || 'User'}</Text>
+            <View className="flex-row items-center mt-1">
+              <Mail size={14} color="#94a3b8" />
+              <Text className="text-base-content/60 ml-1.5">{user?.email}</Text>
+            </View>
           </View>
 
-          <View className="mb-6">
-            <Text className="text-gray-400 mb-2 text-sm font-medium">Full Name</Text>
-            <TextInput
-              value={fullName}
-              onChangeText={setFullName}
-              placeholder="Enter your full name"
-              placeholderTextColor="#6B7280"
-              className="bg-gray-900 text-white p-4 rounded-lg border border-gray-800 text-base"
-              autoCapitalize="words"
-            />
+          {/* Form Section */}
+          <View className="mb-6 space-y-4">
+            <View>
+              <View className="flex-row items-center">
+                <Text className="text-base-content/70 mb-2 text-sm font-medium ml-1">Full Name</Text>
+              </View>
+              <View className="flex-row items-center bg-base-200 border border-base-300 rounded-xl h-12 px-3">
+                <TextInput
+                  value={fullName}
+                  onChangeText={setFullName}
+                  placeholder="Enter your name"
+                  placeholderTextColor="#64748b"
+                  className="flex-1 ml-3 text-base-content text-base"
+                  autoCapitalize="words"
+                  autoComplete="name"
+                  style={{ paddingVertical: 0, height: 48, lineHeight: 20 }}
+                />
+              </View>
+            </View>
           </View>
 
           <TouchableOpacity
             onPress={handleSave}
             disabled={!hasChanges || saving}
-            className={`p-4 rounded-lg items-center mb-6 ${hasChanges && !saving ? 'bg-blue-600' : 'bg-gray-800 opacity-50'
-              }`}
+            className="flex-row justify-center items-center py-4 rounded-xl shadow-sm mb-6 transition-all bg-primary"
           >
             {saving ? (
               <ActivityIndicator color="#FFFFFF" />
             ) : (
-              <Text className="text-white font-bold text-base">Save Changes</Text>
+              <>
+                <UserRoundCheck size={20} color="#FFFFFF" style={{ marginRight: 8 }} />
+                <Text className="font-bold text-white">
+                  Save Changes
+                </Text>
+              </>
             )}
           </TouchableOpacity>
 
-          <View className="border-t border-gray-800 pt-6 mt-auto">
+          <View className="mt-auto pt-6">
             <TouchableOpacity
               onPress={handleSignOut}
-              className="flex-row items-center justify-center p-4 rounded-lg border border-red-900/50 bg-red-900/10"
+              className="flex-row items-center justify-center py-4 rounded-xl border border-error/20 bg-error/5 active:bg-error/10"
             >
-              <Ionicons name="log-out-outline" size={20} color="#EF4444" style={{ marginRight: 8 }} />
-              <Text className="text-red-500 font-bold text-base">Sign Out</Text>
+              <LogOut size={20} color="#f87171" style={{ marginRight: 8 }} />
+              <Text className="text-error font-bold text-base">Sign Out</Text>
             </TouchableOpacity>
           </View>
+
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

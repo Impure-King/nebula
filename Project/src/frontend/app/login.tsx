@@ -1,19 +1,6 @@
 import React, { useState } from "react";
 import { useRouter, Redirect } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
-import {
-  Box,
-  VStack,
-  HStack,
-  Center,
-  Heading,
-  Text,
-  Button,
-  ButtonText,
-  Input,
-  InputField,
-  Pressable,
-} from "@/components/ui";
 import { StatusBar } from "expo-status-bar";
 import {
   KeyboardAvoidingView,
@@ -22,8 +9,14 @@ import {
   StyleSheet,
   SafeAreaView,
   Alert,
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  ActivityIndicator
 } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { ArrowLeft, Eye, EyeOff } from "lucide-react-native";
+import NebulaLogo from "../components/NebulaLogo";
 import { supabase } from "@/lib/supabase";
 
 export default function LoginPage() {
@@ -57,7 +50,6 @@ export default function LoginPage() {
       }
 
       if (data.session) {
-        // Successfully logged in
         router.dismissAll();
         router.replace("/(app)/(tabs)/notes");
         return;
@@ -72,152 +64,120 @@ export default function LoginPage() {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <Box className="flex-1 bg-black">
-        <StatusBar style="light" />
-
-        <KeyboardAvoidingView
-          behavior={Platform.OS === "ios" ? "padding" : undefined}
-          style={styles.keyboardView}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+    <SafeAreaView className="flex-1 bg-base-100">
+      <StatusBar style="light" />
+      
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1"
+      >
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1 }}
+          keyboardShouldPersistTaps="handled"
         >
-          <ScrollView
-            contentContainerStyle={styles.scrollContent}
-            keyboardShouldPersistTaps="handled"
-            showsVerticalScrollIndicator={false}
-          >
-            {/* Back Button - Inside ScrollView */}
-            <Box className="px-6 pt-4 pb-4">
-              <Pressable onPress={() => router.back()}>
-                <HStack space="sm" className="items-center">
-                  <Ionicons name="arrow-back" size={24} color="white" />
-                  <Text className="text-white">Back</Text>
-                </HStack>
-              </Pressable>
-            </Box>
+          {/* Back Button */}
+          <View className="px-6 pt-4">
+            <Pressable 
+              onPress={() => router.back()}
+              className="flex-row items-center p-2 -ml-2 rounded-lg active:bg-base-200/50"
+            >
+              <ArrowLeft size={24} color="#94a3b8" />
+              <Text className="text-base-content/70 ml-2 text-base font-medium">Back</Text>
+            </Pressable>
+          </View>
 
-            <Box className="px-6 pb-8">
-              <VStack space="2xl" className="w-full max-w-md mx-auto">
-                {/* Header */}
-                <VStack space="md" className="items-center">
-                  <Heading size="3xl" className="text-white text-center mb-2">
-                    Welcome Back
-                  </Heading>
+          <View className="flex-1 px-8 justify-center pb-12">
+            
+            {/* Logo Section */}
+            <View className="items-center mb-12">
+              <NebulaLogo size={150} />
+              <Text className="text-base-content text-3xl font-bold mt-8 tracking-tight">
+                Welcome Back
+              </Text>
+              <Text className="text-base-content/60 text-base mt-2">
+                Sign in to your notes
+              </Text>
+            </View>
 
-                  <Text size="md" className="text-gray-400 text-center">
-                    Sign in to your notes
-                  </Text>
-                </VStack>
+            {/* Login Form */}
+            <View className="space-y-6">
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Email
+                </Text>
+                <TextInput
+                  placeholder="Enter your email"
+                  placeholderTextColor="#94a3b8"
+                  value={email}
+                  onChangeText={setEmail}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
+                />
+              </View>
 
-                {/* Login Form */}
-                <VStack
-                  space="lg"
-                  className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
-                >
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Email</Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Enter your email"
-                        placeholderTextColor="#6B7280"
-                        value={email}
-                        onChangeText={setEmail}
-                        keyboardType="email-address"
-                        autoCapitalize="none"
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                    </Input>
-                  </VStack>
-
-                  <VStack space="md">
-                    <Text className="text-gray-300 font-medium">Password</Text>
-                    <Input
-                      variant="outline"
-                      size="xl"
-                      className="border-gray-700 bg-black rounded-xl"
-                      style={styles.input}
-                    >
-                      <InputField
-                        placeholder="Enter your password"
-                        placeholderTextColor="#6B7280"
-                        value={password}
-                        onChangeText={setPassword}
-                        type={showPassword ? "text" : "password"}
-                        autoCapitalize="none"
-                        className="text-white"
-                        style={styles.inputField}
-                      />
-                      <Pressable
-                        onPress={() => setShowPassword(!showPassword)}
-                        className="pr-3"
-                      >
-                        <Ionicons
-                          name={showPassword ? "eye-off" : "eye"}
-                          size={20}
-                          color="#9CA3AF"
-                        />
-                      </Pressable>
-                    </Input>
-                  </VStack>
-
-                  <Pressable onPress={() => { }}>
-                    <Text className="text-gray-400 text-right font-medium">
-                      Forgot Password?
-                    </Text>
-                  </Pressable>
-
-                  <Button
-                    size="xl"
-                    className="w-full bg-white rounded-xl mt-4"
-                    onPress={handleLogin}
-                    isDisabled={isLoading}
+              <View>
+                <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
+                  Password
+                </Text>
+                <View className="relative">
+                  <TextInput
+                    placeholder="Enter your password"
+                    placeholderTextColor="#94a3b8"
+                    value={password}
+                    onChangeText={setPassword}
+                    secureTextEntry={!showPassword}
+                    autoCapitalize="none"
+                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                  />
+                  <Pressable
+                    onPress={() => setShowPassword(!showPassword)}
+                    className="absolute right-4 top-3.5"
                   >
-                    <ButtonText className="text-black font-semibold text-lg">
-                      {isLoading ? "Signing In..." : "Sign In"}
-                    </ButtonText>
-                  </Button>
-                </VStack>
-
-                {/* Sign Up Link */}
-                <HStack space="xs" className="justify-center">
-                  <Text className="text-gray-400">Don't have an account?</Text>
-                  <Pressable onPress={() => router.push("/signup")}>
-                    <Text className="text-white font-bold underline">
-                      Sign Up
-                    </Text>
+                    {showPassword ? (
+                      <EyeOff size={20} color="#94a3b8" />
+                    ) : (
+                      <Eye size={20} color="#94a3b8" />
+                    )}
                   </Pressable>
-                </HStack>
-              </VStack>
-            </Box>
-          </ScrollView>
-        </KeyboardAvoidingView>
-      </Box>
+                </View>
+                
+                <Pressable className="self-end mt-2 p-1" onPress={() => {}}>
+                  <Text className="text-primary text-sm font-medium">
+                    Forgot Password?
+                  </Text>
+                </Pressable>
+              </View>
+
+              <Pressable
+                onPress={handleLogin}
+                disabled={isLoading}
+                className={`w-full bg-primary rounded-xl h-14 justify-center items-center shadow-lg shadow-blue-500/20 active:scale-[0.98] transition-all ${isLoading ? 'opacity-70' : ''}`}
+                android_ripple={{ color: 'rgba(255,255,255,0.2)' }}
+              >
+                {isLoading ? (
+                  <ActivityIndicator color="white" />
+                ) : (
+                  <Text className="text-white text-lg font-bold">
+                    Sign In
+                  </Text>
+                )}
+              </Pressable>
+            </View>
+
+            {/* Sign Up Link */}
+            <View className="flex-row justify-center mt-8">
+              <Text className="text-base-content/60">Don't have an account? </Text>
+              <Pressable onPress={() => router.push("/signup")}>
+                <Text className="text-primary font-bold">Sign Up</Text>
+              </Pressable>
+            </View>
+            
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: "#000000",
-  },
-  keyboardView: {
-    flex: 1,
-  },
-  scrollContent: {
-    flexGrow: 1,
-    justifyContent: "center",
-  },
-  input: {
-    backgroundColor: "#000000",
-  },
-  inputField: {
-    color: "#FFFFFF",
-  } as any,
-});
+

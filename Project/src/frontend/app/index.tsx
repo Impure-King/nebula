@@ -11,7 +11,7 @@ import {
   ButtonText,
 } from "@/components/ui";
 import { StatusBar } from 'expo-status-bar';
-
+import { Bot, Camera, Shield } from "lucide-react-native";
 import { useAuth } from "@/contexts/AuthContext";
 import { Redirect } from "expo-router";
 import NebulaLogo from "@/components/NebulaLogo";
@@ -51,28 +51,28 @@ export default function LandingPage() {
 
           {/* Features */}
           <VStack space="md" className="w-full">
-            <FeatureItem
-              icon="✓"
-              text="Minimalist note-taking"
-            />
-            <FeatureItem
-              icon="📁"
-              text="Organize with ease"
-            />
-            <FeatureItem
-              icon="🔒"
-              text="Secure and private"
-            />
+            <HStack space="md" className="items-center bg-gray-900 rounded-xl p-4 border border-gray-800">
+              <Camera size={24} color="#2196F3" />
+              <Text className="text-gray-300 flex-1">Photo to Notes</Text>
+            </HStack>
+            <HStack space="md" className="items-center bg-gray-900 rounded-xl p-4 border border-gray-800">
+              <Bot size={24} color="#2196F3" />
+              <Text className="text-gray-300 flex-1">Chat with AI</Text>
+            </HStack>
+            <HStack space="md" className="items-center bg-gray-900 rounded-xl p-4 border border-gray-800">
+              <Shield size={24} color="#2196F3" />
+              <Text className="text-gray-300 flex-1">Secure and Private</Text>
+            </HStack>
           </VStack>
 
           {/* CTA Buttons */}
           <VStack space="md" className="w-full mt-8">
             <Button
               size="xl"
-              className="w-full bg-white rounded-xl"
+              className="w-full bg-primary rounded-xl"
               onPress={() => router.push("/login")}
             >
-              <ButtonText className="text-black font-semibold text-lg">
+              <ButtonText className="text-white font-semibold text-lg">
                 Sign In
               </ButtonText>
             </Button>
@@ -80,10 +80,10 @@ export default function LandingPage() {
             <Button
               size="xl"
               variant="outline"
-              className="w-full border-2 border-white rounded-xl"
+              className="w-full border-2 border-primary rounded-xl"
               onPress={() => router.push("/signup")}
             >
-              <ButtonText className="text-white font-semibold text-lg">
+              <ButtonText className="text-primary font-semibold text-lg">
                 Create Account
               </ButtonText>
             </Button>
@@ -91,19 +91,10 @@ export default function LandingPage() {
 
           {/* Footer */}
           <Text size="sm" className="text-gray-500 text-center mt-4">
-            Your thoughts, beautifully organized
+            Your knowledge, intelligently organized
           </Text>
         </VStack>
       </Center>
     </Box>
-  );
-}
-
-function FeatureItem({ icon, text }: { icon: string; text: string }) {
-  return (
-    <HStack space="md" className="items-center bg-gray-900 rounded-xl p-4 border border-gray-800">
-      <Text className="text-2xl">{icon}</Text>
-      <Text className="text-gray-300 flex-1">{text}</Text>
-    </HStack>
   );
 }
