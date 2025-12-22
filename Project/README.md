@@ -2,7 +2,7 @@
 
 **A comprehensive mobile application for creating, organizing, and sharing notes.**
 
-Key Features:
+## Key Features
 
 - **Rich Text Editing**: Create notes with ease.
 - **OCR Integration**: Capture text and math from images using AI.
@@ -10,8 +10,7 @@ Key Features:
 
 ## Important: Network & Backend Connection
 
-> [!WARNING]
-> **Localhost will not work on physical devices.**
+> [!WARNING] > **Localhost will not work on physical devices.**
 > If running the frontend on a real device, `localhost` (127.0.0.1) cannot access the backend running on your computer.
 >
 > - **Option A (Recommended)**: Set `__DEV__ = true` in the frontend config to use our deployed GCP backend.
