@@ -13,7 +13,7 @@ export default function MainLayout() {
       // Just replace to landing page. dismissAll might be causing POP_TO_TOP error if stack is empty.
       router.replace("/");
     }
-  }, [session, loading]);
+  }, [session, loading, router]);
 
   // Show loading screen while checking session or redirecting
   if (loading || !session) {

@@ -30,15 +30,6 @@ function NoteCard({ note, onPress }: NoteCardProps) {
     ]).start();
   }, [fadeAnim, scaleAnim]);
 
-  // Strip markdown formatting for preview
-  const getContentPreview = (content: string): string => {
-    return content
-      .replace(/[#*_`~\[\]]/g, '') // Remove markdown symbols
-      .replace(/\n+/g, ' ') // Replace newlines with spaces
-      .trim();
-  };
-
-  const contentPreview = getContentPreview(note.content);
   const formattedDate = formatRelativeTime(note.updated_at);
 
   return (

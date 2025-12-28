@@ -8,7 +8,7 @@ export interface AIProcessRequest {
   userPrompt: string;
 }
 
-export const useAIService = () => {
+const useAIServiceHook = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -47,4 +47,4 @@ export const useAIService = () => {
   return { loading, error, processPrompt };
 };
 
-export default useAIService;
+export default useAIServiceHook;

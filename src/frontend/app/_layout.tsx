@@ -24,7 +24,7 @@ configureReanimatedLogger({
 });
 
 function RootLayoutNav() {
-  const { session, loading } = useAuth();
+  const { loading } = useAuth();
   const colorScheme = useColorScheme();
   const [fontsLoaded] = useFonts({
     PlusJakartaSans_400Regular,

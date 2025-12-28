@@ -12,7 +12,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
-import { Sparkle, X, Copy, List, Lightbulb, CheckCheck, Send, AlertCircle, Sparkles } from 'lucide-react-native';
+import { Sparkle, X, Copy, List, Lightbulb, CheckCheck, Send, AlertCircle } from 'lucide-react-native';
 import MarkdownRenderer from './MarkdownRenderer';
 import useAIService from '../hooks/useAIService';
 
@@ -30,7 +30,7 @@ interface AIToolsSectionProps {
   noteTitle: string;
 }
 
-export const AIToolsSection: React.FC<AIToolsSectionProps> = ({
+const AIToolsSectionComponent: React.FC<AIToolsSectionProps> = ({
   onClose,
   noteContent,
   noteTitle,
@@ -214,5 +214,4 @@ export const AIToolsSection: React.FC<AIToolsSectionProps> = ({
     </Animated.View>
   );
 };
-
-export default AIToolsSection;
+export default AIToolsSectionComponent;

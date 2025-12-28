@@ -1,9 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import {
   Modal,
-  View,
-  Animated,
-  useWindowDimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AIToolsSection from './AIToolsSection';
@@ -15,13 +12,13 @@ interface AIToolsModalProps {
   noteTitle: string;
 }
 
-export const AIToolsModal: React.FC<AIToolsModalProps> = ({
+const AIToolsModal: React.FC<AIToolsModalProps> = ({
   visible,
   onClose,
   noteContent,
   noteTitle,
 }) => {
-  const { height } = useWindowDimensions();
+  // const { height } = useWindowDimensions();
 
   return (
     <Modal

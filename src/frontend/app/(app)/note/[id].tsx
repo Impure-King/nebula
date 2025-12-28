@@ -100,6 +100,7 @@ export default function NoteDetailScreen() {
     };
 
     loadNote();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, fadeAnim, router]);
 
   // Use ref to store latest values without triggering re-renders
@@ -215,7 +216,7 @@ export default function NoteDetailScreen() {
           await AsyncStorage.removeItem(`note_draft_${note.id}`);
           router.replace('/(app)/(tabs)/notes');
         }
-      } catch (error) {
+      } catch {
         Alert.alert('Delete Failed', 'Unable to delete note.');
       }
     };

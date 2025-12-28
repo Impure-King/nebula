@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, Animated } from 'react-native';
+import { Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
 interface SemanticSearchToggleProps {

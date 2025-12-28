@@ -4,7 +4,8 @@ import NotesHeader from '../NotesHeader';
 
 // Mock UI components
 jest.mock('../../components/ui', () => {
-    const { View, Text, TouchableOpacity } = require('react-native');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { View, Text } = require('react-native');
     return {
         HStack: (props: any) => <View {...props} style={{ flexDirection: 'row' }} />,
         VStack: (props: any) => <View {...props} />,
