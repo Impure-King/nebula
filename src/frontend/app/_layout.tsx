@@ -1,5 +1,14 @@
 import { Stack } from "expo-router";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import {
+  configureReanimatedLogger,
+} from "react-native-reanimated";
+
+// disable strict mode to suppress warning
+configureReanimatedLogger({
+  strict: false,
+});
+
 import { View, ActivityIndicator, useColorScheme } from "react-native";
 import { 
   useFonts,
