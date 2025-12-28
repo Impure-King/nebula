@@ -4,11 +4,6 @@ import {
   configureReanimatedLogger,
 } from "react-native-reanimated";
 
-// disable strict mode to suppress warning
-configureReanimatedLogger({
-  strict: false,
-});
-
 import { View, ActivityIndicator, useColorScheme } from "react-native";
 import { 
   useFonts,
@@ -22,6 +17,11 @@ import { JetBrainsMono_400Regular } from "@expo-google-fonts/jetbrains-mono";
 import { GluestackUIProvider } from "@/components/ui/gluestack-ui-provider";
 import "@/global.css";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
+
+// disable strict mode to suppress warning
+configureReanimatedLogger({
+  strict: false,
+});
 
 function RootLayoutNav() {
   const { session, loading } = useAuth();

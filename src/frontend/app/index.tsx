@@ -1,4 +1,4 @@
-import { useRouter } from "expo-router";
+import { useRouter , Redirect } from "expo-router";
 import { useEffect } from "react";
 import {
   Box,
@@ -13,7 +13,6 @@ import {
 import { StatusBar } from 'expo-status-bar';
 import { Bot, Camera, Shield } from "lucide-react-native";
 import { useAuth } from "@/contexts/AuthContext";
-import { Redirect } from "expo-router";
 import NebulaLogo from "@/components/NebulaLogo";
 
 export default function LandingPage() {
