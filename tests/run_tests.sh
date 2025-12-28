@@ -2,7 +2,7 @@
 set -e
 
 # Configuration
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 BACKEND_DIR="$PROJECT_DIR/src/backend"
 FRONTEND_DIR="$PROJECT_DIR/src/frontend"
 
