@@ -19,7 +19,7 @@ export default function NotFoundScreen() {
         {/* Error Message */}
         <Text style={styles.title}>Page Not Found</Text>
         <Text style={styles.subtitle}>
-          The page you're looking for doesn't exist or has been moved.
+          The page you&apos;re looking for doesn&apos;t exist or has been moved.
         </Text>
 
         {/* Go Home Button */}

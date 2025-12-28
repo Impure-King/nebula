@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback, useEffect } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import {
   View,
   FlatList,
@@ -8,23 +8,27 @@ import {
   ActivityIndicator,
   useWindowDimensions,
   Alert,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter, useFocusEffect } from 'expo-router';
-import * as ImagePicker from 'expo-image-picker';
-import { useAuth } from '@/contexts/AuthContext';
-import { api } from '@/services/api';
-import { getAllNotes, initializeNotes, generateEmbeddingsForAllNotes } from '@/utils/noteStorage';
-import { filterNotesBySearch, sortNotes } from '@/utils/noteUtils';
-import NotesHeader from '@/components/NotesHeader';
-import SearchBar from '@/components/SearchBar';
-import SortControls from '@/components/SortControls';
-import NoteCard from '@/components/NoteCard';
-import NoteCardSkeleton from '@/components/NoteCardSkeleton';
-import { Note, SortOption, SemanticSearchResult } from '@/types/note';
+} from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter, useFocusEffect } from "expo-router";
+import * as ImagePicker from "expo-image-picker";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/services/api";
+import {
+  getAllNotes,
+  initializeNotes,
+  generateEmbeddingsForAllNotes,
+} from "@/utils/noteStorage";
+import { filterNotesBySearch, sortNotes } from "@/utils/noteUtils";
+import NotesHeader from "@/components/NotesHeader";
+import SearchBar from "@/components/SearchBar";
+import SortControls from "@/components/SortControls";
+import NoteCard from "@/components/NoteCard";
+import NoteCardSkeleton from "@/components/NoteCardSkeleton";
+import { Note, SortOption, SemanticSearchResult } from "@/types/note";
 
-import { API_URL } from '@/constants/env';
+import { API_URL } from "@/constants/env";
 
 export default function NotesScreen() {
   const router = useRouter();
@@ -49,14 +53,16 @@ export default function NotesScreen() {
 
   // State management for notes list
   const { session } = useAuth();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [submittedQuery, setSubmittedQuery] = useState('');
-  const [sortBy, setSortBy] = useState<SortOption>('date-desc');
+  const [searchQuery, setSearchQuery] = useState("");
+  const [submittedQuery, setSubmittedQuery] = useState("");
+  const [sortBy, setSortBy] = useState<SortOption>("date-desc");
   const [notes, setNotes] = useState<Note[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isSemanticSearch, setIsSemanticSearch] = useState(false);
-  const [semanticResults, setSemanticResults] = useState<SemanticSearchResult[]>([]); // Keep for reference if needed, or remove
+  const [semanticResults, setSemanticResults] = useState<
+    SemanticSearchResult[]
+  >([]); // Keep for reference if needed, or remove
   const [semanticMatchedNotes, setSemanticMatchedNotes] = useState<Note[]>([]);
   const [isSearchingSemantic, setIsSearchingSemantic] = useState(false);
 
@@ -72,19 +78,21 @@ export default function NotesScreen() {
   // Initialize embeddings for existing notes (one-time operation)
   const initializeEmbeddings = async () => {
     try {
-      const EMBEDDINGS_INITIALIZED_KEY = 'embeddings_initialized';
-      const initialized = await AsyncStorage.getItem(EMBEDDINGS_INITIALIZED_KEY);
+      const EMBEDDINGS_INITIALIZED_KEY = "embeddings_initialized";
+      const initialized = await AsyncStorage.getItem(
+        EMBEDDINGS_INITIALIZED_KEY
+      );
 
       if (!initialized) {
-        console.log('[Embeddings] Generating embeddings for all notes...');
+        console.log("[Embeddings] Generating embeddings for all notes...");
         await generateEmbeddingsForAllNotes();
-        await AsyncStorage.setItem(EMBEDDINGS_INITIALIZED_KEY, 'true');
-        console.log('[Embeddings] Successfully initialized embeddings');
+        await AsyncStorage.setItem(EMBEDDINGS_INITIALIZED_KEY, "true");
+        console.log("[Embeddings] Successfully initialized embeddings");
       } else {
-        console.log('[Embeddings] Already initialized, skipping');
+        console.log("[Embeddings] Already initialized, skipping");
       }
     } catch (error) {
-      console.error('[Embeddings] Failed to initialize embeddings:', error);
+      console.error("[Embeddings] Failed to initialize embeddings:", error);
       // Don't show error to user, embeddings will be generated on next note update
     }
   };
@@ -93,10 +101,10 @@ export default function NotesScreen() {
   // Remove this after testing
   const clearEmbeddingsFlag = async () => {
     try {
-      await AsyncStorage.removeItem('embeddings_initialized');
-      console.log('[Embeddings] Flag cleared, will re-initialize on next load');
+      await AsyncStorage.removeItem("embeddings_initialized");
+      console.log("[Embeddings] Flag cleared, will re-initialize on next load");
     } catch (error) {
-      console.error('[Embeddings] Failed to clear flag:', error);
+      console.error("[Embeddings] Failed to clear flag:", error);
     }
   };
 
@@ -122,8 +130,8 @@ export default function NotesScreen() {
         setNotes(loadedNotes);
       }
     } catch (error) {
-      console.error('Error loading notes:', error);
-      Alert.alert('Error', 'Failed to load notes');
+      console.error("Error loading notes:", error);
+      Alert.alert("Error", "Failed to load notes");
     } finally {
       setIsLoading(false);
     }
@@ -136,13 +144,12 @@ export default function NotesScreen() {
     return sortNotes(filtered, sortBy);
   }, [notes, submittedQuery, sortBy]);
 
-
   // Event handlers with useCallback for optimization
   const handleSearchChange = useCallback((text: string) => {
     setSearchQuery(text);
     // Clear results if text is empty, but don't auto-search
     if (text.length === 0) {
-      setSubmittedQuery('');
+      setSubmittedQuery("");
       setSemanticResults([]);
       setSemanticMatchedNotes([]);
     }
@@ -162,28 +169,41 @@ export default function NotesScreen() {
   const performSemanticSearch = async (query: string) => {
     try {
       setIsSearchingSemantic(true);
-      console.log('[Semantic Search] Starting search for:', query);
+      console.log("[Semantic Search] Starting search for:", query);
 
       const response = await api.embeddings.search(query);
-      console.log('[Semantic Search] API response:', response);
+      console.log("[Semantic Search] API response:", response);
 
       const results = response.results || [];
-      console.log('[Semantic Search] Results count:', results.length);
-      console.log('[Semantic Search] Results:', results);
+      console.log("[Semantic Search] Results count:", results.length);
+      console.log("[Semantic Search] Results:", results);
 
       // Extract unique note IDs from results
-      const uniqueNoteIds = Array.from(new Set(results.map((r: SemanticSearchResult) => r.note_id)));
-      console.log('[Semantic Search] Unique note IDs from results:', uniqueNoteIds);
-      console.log('[Semantic Search] Currently loaded notes:', notes.length);
-      console.log('[Semantic Search] Loaded note IDs:', notes.map(n => n.id));
+      const uniqueNoteIds = Array.from(
+        new Set(results.map((r: SemanticSearchResult) => r.note_id))
+      );
+      console.log(
+        "[Semantic Search] Unique note IDs from results:",
+        uniqueNoteIds
+      );
+      console.log("[Semantic Search] Currently loaded notes:", notes.length);
+      console.log(
+        "[Semantic Search] Loaded note IDs:",
+        notes.map((n) => n.id)
+      );
 
       // Filter local notes to find matches
       // Note: This assumes all notes are already loaded in 'notes' state.
       // If we have pagination, we might need to fetch these notes from backend.
       // For MVP, we'll use loaded notes.
-      const matchedNotes = notes.filter(note => uniqueNoteIds.includes(note.id));
-      console.log('[Semantic Search] Matched notes count:', matchedNotes.length);
-      console.log('[Semantic Search] Matched notes:', matchedNotes);
+      const matchedNotes = notes.filter((note) =>
+        uniqueNoteIds.includes(note.id)
+      );
+      console.log(
+        "[Semantic Search] Matched notes count:",
+        matchedNotes.length
+      );
+      console.log("[Semantic Search] Matched notes:", matchedNotes);
 
       // Sort matched notes by similarity (using the first chunk's similarity as proxy)
       // We create a map of note_id -> max_similarity
@@ -201,12 +221,14 @@ export default function NotesScreen() {
         return simB - simA;
       });
 
-      console.log('[Semantic Search] Setting matched notes:', sortedMatchedNotes.length);
+      console.log(
+        "[Semantic Search] Setting matched notes:",
+        sortedMatchedNotes.length
+      );
       setSemanticMatchedNotes(sortedMatchedNotes);
-
     } catch (error) {
-      console.error('Semantic search failed:', error);
-      Alert.alert('Error', 'Failed to perform semantic search');
+      console.error("Semantic search failed:", error);
+      Alert.alert("Error", "Failed to perform semantic search");
     } finally {
       setIsSearchingSemantic(false);
     }
@@ -216,8 +238,8 @@ export default function NotesScreen() {
     setIsSemanticSearch(value);
     // Clear results when switching modes
     setSemanticResults([]);
-    setSubmittedQuery('');
-    // Optional: Auto-trigger search if query exists? 
+    setSubmittedQuery("");
+    // Optional: Auto-trigger search if query exists?
     // User requested "then they hit the button", so let's NOT auto-trigger.
   }, []);
 
@@ -225,37 +247,36 @@ export default function NotesScreen() {
     setSortBy(option);
   }, []);
 
-  const handleNotePress = useCallback((noteId: string) => {
-    // Navigate to note detail screen with note ID
-    // Note: This route will be available once task 5 is implemented
-    router.push(`/(app)/note/${noteId}` as any);
-  }, [router]);
+  const handleNotePress = useCallback(
+    (noteId: string) => {
+      // Navigate to note detail screen with note ID
+      // Note: This route will be available once task 5 is implemented
+      router.push(`/(app)/note/${noteId}` as any);
+    },
+    [router]
+  );
 
   const handleCreateNote = () => {
     // Navigate to new note creation
     // We'll use a modal or a separate screen
-    router.push('/(app)/note/new' as any);
+    router.push("/(app)/note/new" as any);
   };
 
   const handleScanPress = useCallback(() => {
-    Alert.alert(
-      'Scan Note',
-      'Choose an option to import a note',
-      [
-        {
-          text: 'Take Photo',
-          onPress: () => processImage(true),
-        },
-        {
-          text: 'Choose from Library',
-          onPress: () => processImage(false),
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ]
-    );
+    Alert.alert("Scan Note", "Choose an option to import a note", [
+      {
+        text: "Take Photo",
+        onPress: () => processImage(true),
+      },
+      {
+        text: "Choose from Library",
+        onPress: () => processImage(false),
+      },
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+    ]);
   }, []);
 
   const processImage = async (useCamera: boolean) => {
@@ -266,7 +287,10 @@ export default function NotesScreen() {
       if (useCamera) {
         const permission = await ImagePicker.requestCameraPermissionsAsync();
         if (!permission.granted) {
-          Alert.alert('Permission needed', 'Camera permission is required to take photos.');
+          Alert.alert(
+            "Permission needed",
+            "Camera permission is required to take photos."
+          );
           setIsLoading(false);
           return;
         }
@@ -276,9 +300,13 @@ export default function NotesScreen() {
           base64: false, // We'll let file upload handle it or read it if needed? API expects file.
         });
       } else {
-        const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        const permission =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (!permission.granted) {
-          Alert.alert('Permission needed', 'Library permission is required to select photos.');
+          Alert.alert(
+            "Permission needed",
+            "Library permission is required to select photos."
+          );
           setIsLoading(false);
           return;
         }
@@ -294,30 +322,30 @@ export default function NotesScreen() {
         // Upload to backend
         const formData = new FormData();
         const uri = asset.uri;
-        const filename = uri.split('/').pop() || 'photo.jpg';
+        const filename = uri.split("/").pop() || "photo.jpg";
         const match = /\.(\w+)$/.exec(filename);
         const type = match ? `image/${match[1]}` : `image`;
 
         // React Native FormData expects an object with uri, name, type
-        formData.append('file', {
+        formData.append("file", {
           uri: uri,
           name: filename,
           type: type,
         } as any);
 
-        console.log('Sending image to OCR service...');
+        console.log("Sending image to OCR service...");
         // Note: You need to implement api.ocr.extract(formData)
-        // Since api.ocr might not exist yet in your generated api wrapper, 
+        // Since api.ocr might not exist yet in your generated api wrapper,
         // we'll assume a direct fetch or extending the api service.
         // For now, let's try to assume api.ocr exists or fetch directly.
 
         // Ideally: const response = await api.ocr.extract(formData);
         // Direct fetch backup;
-        console.log('Using API URL for OCR:', API_URL);
-        console.log('Full Endpoint:', `${API_URL}/ocr/extract`);
+        console.log("Using API URL for OCR:", API_URL);
+        console.log("Full Endpoint:", `${API_URL}/ocr/extract`);
 
         const response = await fetch(`${API_URL}/ocr/extract`, {
-          method: 'POST',
+          method: "POST",
           body: formData,
           headers: {
             // 'Content-Type': 'multipart/form-data', // Let fetch set this automatically for FormData
@@ -333,14 +361,14 @@ export default function NotesScreen() {
 
         if (markdown) {
           router.push({
-            pathname: '/(app)/note/new',
-            params: { initialContent: markdown }
+            pathname: "/(app)/note/new",
+            params: { initialContent: markdown },
           } as any);
         }
       }
     } catch (error) {
-      console.error('Scan error:', error);
-      Alert.alert('Scan Failed', 'Could not extract text from image.');
+      console.error("Scan error:", error);
+      Alert.alert("Scan Failed", "Could not extract text from image.");
     } finally {
       setIsLoading(false);
     }
@@ -351,11 +379,11 @@ export default function NotesScreen() {
     try {
       await loadNotes();
     } catch (error) {
-      console.error('Failed to refresh notes:', error);
+      console.error("Failed to refresh notes:", error);
       Alert.alert(
-        'Refresh Failed',
-        'Unable to refresh notes. Please check your connection and try again.',
-        [{ text: 'OK' }]
+        "Refresh Failed",
+        "Unable to refresh notes. Please check your connection and try again.",
+        [{ text: "OK" }]
       );
     } finally {
       setIsRefreshing(false);
@@ -363,40 +391,46 @@ export default function NotesScreen() {
   }, []);
 
   // Render semantic result card
-  const renderSemanticResult = useCallback(({ item }: { item: SemanticSearchResult }) => {
-    const cardWidth = 100 / numColumns;
-    // Find the original note to get the title if possible, or just show snippet
-    const originalNote = notes.find(n => n.id === item.note_id);
+  const renderSemanticResult = useCallback(
+    ({ item }: { item: SemanticSearchResult }) => {
+      const cardWidth = 100 / numColumns;
+      // Find the original note to get the title if possible, or just show snippet
+      const originalNote = notes.find((n) => n.id === item.note_id);
 
-    return (
-      <View
-        className="px-3 mb-4"
-        style={{ width: `${cardWidth}%` }}
-      >
-        <View className="bg-base-200 rounded-2xl p-4 border border-base-300 h-44 shadow-sm relative overflow-hidden">
-          {/* Subtle accent line similar to NoteCard */}
-          <View className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
-          
-          <Text className="text-primary font-bold text-lg mb-2" numberOfLines={1}>
-            {originalNote?.title || 'Note Fragment'}
-          </Text>
-          <Text className="text-base-content/70 text-sm leading-5" numberOfLines={4}>
-            {item.content}
-          </Text>
-          <View className="mt-auto flex-row justify-between items-center">
-            <View className="flex-row items-center bg-primary/10 px-2 py-0.5 rounded-full">
-              <Text className="text-primary text-xs font-bold">
-                {Math.round(item.similarity * 100)}% Match
+      return (
+        <View className="px-3 mb-4" style={{ width: `${cardWidth}%` }}>
+          <View className="bg-base-200 rounded-2xl p-4 border border-base-300 h-44 shadow-sm relative overflow-hidden">
+            {/* Subtle accent line similar to NoteCard */}
+            <View className="absolute left-0 top-0 bottom-0 w-1 bg-primary/40" />
+
+            <Text
+              className="text-primary font-bold text-lg mb-2"
+              numberOfLines={1}
+            >
+              {originalNote?.title || "Note Fragment"}
+            </Text>
+            <Text
+              className="text-base-content/70 text-sm leading-5"
+              numberOfLines={4}
+            >
+              {item.content}
+            </Text>
+            <View className="mt-auto flex-row justify-between items-center">
+              <View className="flex-row items-center bg-primary/10 px-2 py-0.5 rounded-full">
+                <Text className="text-primary text-xs font-bold">
+                  {Math.round(item.similarity * 100)}% Match
+                </Text>
+              </View>
+              <Text className="text-base-content/40 text-xs">
+                Part {item.chunk_index + 1}/{item.total_chunks}
               </Text>
             </View>
-            <Text className="text-base-content/40 text-xs">
-              Part {item.chunk_index + 1}/{item.total_chunks}
-            </Text>
           </View>
         </View>
-      </View>
-    );
-  }, [numColumns, notes]);
+      );
+    },
+    [numColumns, notes]
+  );
 
   // Render skeleton loading cards
   const renderSkeletonCards = () => {
@@ -432,9 +466,11 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel={`No notes found for ${searchQuery}`}
         >
-          <Text className="text-base-content/50 text-lg mb-2 font-medium">No notes found</Text>
+          <Text className="text-base-content/50 text-lg mb-2 font-medium">
+            No notes found
+          </Text>
           <Text className="text-base-content/40 text-sm">
-            No results for "{searchQuery}"
+            No results for &quot;{searchQuery}&quot;
           </Text>
         </View>
       );
@@ -447,7 +483,9 @@ export default function NotesScreen() {
           className="flex-1 items-center justify-center py-20"
           accessibilityLabel="No notes yet. Create your first note to get started"
         >
-          <Text className="text-base-content/50 text-lg mb-2 font-medium">No notes yet</Text>
+          <Text className="text-base-content/50 text-lg mb-2 font-medium">
+            No notes yet
+          </Text>
           <Text className="text-base-content/40 text-sm">
             Create your first note to get started
           </Text>
@@ -459,32 +497,38 @@ export default function NotesScreen() {
   };
 
   // Render individual note card
-  const renderNoteCard = useCallback(({ item }: { item: Note }) => {
-    const cardWidth = 100 / numColumns;
-    return (
-      <View
-        className="px-3 mb-4"
-        style={{ width: `${cardWidth}%` }}
-      >
-        <NoteCard note={item} onPress={handleNotePress} />
-      </View>
-    );
-  }, [handleNotePress, numColumns]);
+  const renderNoteCard = useCallback(
+    ({ item }: { item: Note }) => {
+      const cardWidth = 100 / numColumns;
+      return (
+        <View className="px-3 mb-4" style={{ width: `${cardWidth}%` }}>
+          <NoteCard note={item} onPress={handleNotePress} />
+        </View>
+      );
+    },
+    [handleNotePress, numColumns]
+  );
 
   // Calculate item layout for FlatList optimization
   // Each card has: minHeight 160px + padding 16px (mb-4) = 176px per row
-  const getItemLayout = useCallback((data: any, index: number) => {
-    const ITEM_HEIGHT = 176; // Card height + margin
-    const rowIndex = Math.floor(index / numColumns);
-    return {
-      length: ITEM_HEIGHT,
-      offset: ITEM_HEIGHT * rowIndex,
-      index,
-    };
-  }, [numColumns]);
+  const getItemLayout = useCallback(
+    (data: any, index: number) => {
+      const ITEM_HEIGHT = 176; // Card height + margin
+      const rowIndex = Math.floor(index / numColumns);
+      return {
+        length: ITEM_HEIGHT,
+        offset: ITEM_HEIGHT * rowIndex,
+        index,
+      };
+    },
+    [numColumns]
+  );
 
   return (
-    <SafeAreaView className="flex-1 bg-base-100" edges={['top', 'left', 'right']}>
+    <SafeAreaView
+      className="flex-1 bg-base-100"
+      edges={["top", "left", "right"]}
+    >
       <StatusBar barStyle="light-content" backgroundColor="#020617" />
 
       <View className="flex-1 pt-4">
@@ -498,7 +542,9 @@ export default function NotesScreen() {
                 value={searchQuery}
                 onChangeText={handleSearchChange}
                 onSearch={handleSearchSubmit}
-                placeholder={isSemanticSearch ? "Search by meaning..." : "Search notes..."}
+                placeholder={
+                  isSemanticSearch ? "Search by meaning..." : "Search notes..."
+                }
                 isSemantic={isSemanticSearch}
                 onToggleSemantic={handleToggleSemantic}
               />
@@ -527,7 +573,7 @@ export default function NotesScreen() {
               refreshing={isRefreshing}
               onRefresh={handleRefresh}
               tintColor="#3b82f6"
-              colors={['#3b82f6']}
+              colors={["#3b82f6"]}
               accessibilityLabel="Pull to refresh notes"
             />
           }
@@ -539,7 +585,9 @@ export default function NotesScreen() {
           updateCellsBatchingPeriod={50}
           removeClippedSubviews={true}
           // Accessibility
-          accessibilityLabel={`Notes list. ${displayedNotes.length} ${displayedNotes.length === 1 ? 'note' : 'notes'} displayed`}
+          accessibilityLabel={`Notes list. ${displayedNotes.length} ${
+            displayedNotes.length === 1 ? "note" : "notes"
+          } displayed`}
           accessibilityRole="list"
         />
       </View>

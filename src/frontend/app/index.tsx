@@ -20,14 +20,14 @@ export default function LandingPage() {
   const router = useRouter();
   const { session, loading } = useAuth();
 
-  if (!loading && session) {
-    return <Redirect href="/(app)/(tabs)/notes" />;
-  }
-
   useEffect(() => {
     console.log("[Landing Page] MOUNTED");
     return () => console.log("[Landing Page] UNMOUNTED");
   }, []);
+
+  if (!loading && session) {
+    return <Redirect href="/(app)/(tabs)/notes" />;
+  }
 
   return (
     <Box className="flex-1 bg-black">
