@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useRouter, Redirect } from "expo-router";
 import { useAuth } from "@/contexts/AuthContext";
 import { StatusBar } from "expo-status-bar";
@@ -29,6 +29,11 @@ export default function SignUpPage() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { session, loading } = useAuth();
+  
+  const nameRef = React.useRef<TextInput>(null);
+  const emailRef = React.useRef<TextInput>(null);
+  const passwordRef = React.useRef<TextInput>(null);
+  const confirmPasswordRef = React.useRef<TextInput>(null);
 
   if (!loading && session) {
     return <Redirect href="/(app)/(tabs)/notes" />;
@@ -141,49 +146,68 @@ export default function SignUpPage() {
             </View>
 
             {/* Form */}
-            <View className="space-y-5">
+            <View className="gap-6">
               
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Full Name
                 </Text>
-                <TextInput
-                  placeholder="Enter your full name"
-                  placeholderTextColor="#94a3b8"
-                  value={name}
-                  onChangeText={setName}
-                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
-                />
+                <Pressable 
+                  onPress={() => nameRef.current?.focus()}
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary"
+                >
+                  <TextInput
+                    ref={nameRef}
+                    placeholder="Enter your full name"
+                    placeholderTextColor="#94a3b8"
+                    value={name}
+                    onChangeText={setName}
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 14, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
+                  />
+                </Pressable>
               </View>
 
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Email
                 </Text>
-                <TextInput
-                  placeholder="Enter your email"
-                  placeholderTextColor="#94a3b8"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
-                />
+                <Pressable 
+                  onPress={() => emailRef.current?.focus()}
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary"
+                >
+                  <TextInput
+                    ref={emailRef}
+                    placeholder="Enter your email"
+                    placeholderTextColor="#94a3b8"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 16, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
+                  />
+                </Pressable>
               </View>
 
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Password
                 </Text>
-                <View className="relative">
+                <Pressable 
+                  onPress={() => passwordRef.current?.focus()}
+                  className="relative bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary pr-12"
+                >
                   <TextInput
+                    ref={passwordRef}
                     placeholder="Create a password"
                     placeholderTextColor="#94a3b8"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
-                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 16, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
                   />
                   <Pressable
                     onPress={() => setShowPassword(!showPassword)}
@@ -195,22 +219,27 @@ export default function SignUpPage() {
                       <Eye size={20} color="#94a3b8" />
                     )}
                   </Pressable>
-                </View>
+                </Pressable>
               </View>
 
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Confirm Password
                 </Text>
-                <View className="relative">
+                <Pressable 
+                  onPress={() => confirmPasswordRef.current?.focus()}
+                  className="relative bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary pr-12"
+                >
                   <TextInput
+                    ref={confirmPasswordRef}
                     placeholder="Confirm your password"
                     placeholderTextColor="#94a3b8"
                     value={confirmPassword}
                     onChangeText={setConfirmPassword}
                     secureTextEntry={!showConfirmPassword}
                     autoCapitalize="none"
-                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 16, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
                   />
                   <Pressable
                     onPress={() => setShowConfirmPassword(!showConfirmPassword)}
@@ -222,7 +251,7 @@ export default function SignUpPage() {
                       <Eye size={20} color="#94a3b8" />
                     )}
                   </Pressable>
-                </View>
+                </Pressable>
               </View>
 
               <Pressable

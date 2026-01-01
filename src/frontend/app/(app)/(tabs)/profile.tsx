@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
+  Pressable,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../../../contexts/AuthContext';
@@ -22,6 +23,7 @@ export default function ProfileScreen() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [initialFullName, setInitialFullName] = useState('');
+  const fullNameRef = React.useRef<TextInput>(null);
 
   useEffect(() => {
     loadProfile();
@@ -112,18 +114,22 @@ export default function ProfileScreen() {
               <View className="flex-row items-center">
                 <Text className="text-base-content/70 mb-2 text-sm font-medium ml-1">Full Name</Text>
               </View>
-              <View className="flex-row items-center bg-base-200 border border-base-300 rounded-xl h-12 px-3">
+              <Pressable 
+                onPress={() => fullNameRef.current?.focus()}
+                className="flex-row items-center bg-base-200 border border-base-300 rounded-xl h-12 px-3"
+              >
                 <TextInput
+                  ref={fullNameRef}
                   value={fullName}
                   onChangeText={setFullName}
                   placeholder="Enter your name"
                   placeholderTextColor="#64748b"
-                  className="flex-1 ml-3 text-base-content text-base"
+                  className="flex-1 ml-3 text-base-content"
                   autoCapitalize="words"
                   autoComplete="name"
-                  style={{ paddingVertical: 0, height: 48, lineHeight: 20 }}
+                  style={{ fontSize: 14, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
                 />
-              </View>
+              </Pressable>
             </View>
           </View>
 

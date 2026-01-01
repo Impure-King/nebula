@@ -26,6 +26,9 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  const emailRef = React.useRef<TextInput>(null);
+  const passwordRef = React.useRef<TextInput>(null);
+
   if (!loading && session) {
     return <Redirect href="/(app)/(tabs)/notes" />;
   }
@@ -99,35 +102,47 @@ export default function LoginPage() {
             </View>
 
             {/* Login Form */}
-            <View className="space-y-6">
+            <View className="gap-6">
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Email
                 </Text>
-                <TextInput
-                  placeholder="Enter your email"
-                  placeholderTextColor="#94a3b8"
-                  value={email}
-                  onChangeText={setEmail}
-                  keyboardType="email-address"
-                  autoCapitalize="none"
-                  className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary"
-                />
+                <Pressable 
+                  onPress={() => emailRef.current?.focus()}
+                  className="bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary"
+                >
+                  <TextInput
+                    ref={emailRef}
+                    placeholder="Enter your email"
+                    placeholderTextColor="#94a3b8"
+                    value={email}
+                    onChangeText={setEmail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 14, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
+                  />
+                </Pressable>
               </View>
 
               <View>
                 <Text className="text-base-content/70 text-sm font-medium mb-2 ml-1">
                   Password
                 </Text>
-                <View className="relative">
+                <Pressable 
+                  onPress={() => passwordRef.current?.focus()}
+                  className="relative bg-base-200 border border-base-300 rounded-xl px-4 h-14 flex-row items-center focus-within:border-primary pr-12"
+                >
                   <TextInput
+                    ref={passwordRef}
                     placeholder="Enter your password"
                     placeholderTextColor="#94a3b8"
                     value={password}
                     onChangeText={setPassword}
                     secureTextEntry={!showPassword}
                     autoCapitalize="none"
-                    className="bg-base-200 border border-base-300 rounded-xl px-4 py-3.5 text-base-content text-base focus:border-primary pr-12"
+                    className="flex-1 text-base-content"
+                    style={{ fontSize: 16, fontFamily: 'PlusJakartaSans_400Regular', paddingVertical: 0 }}
                   />
                   <Pressable
                     onPress={() => setShowPassword(!showPassword)}
@@ -139,7 +154,7 @@ export default function LoginPage() {
                       <Eye size={20} color="#94a3b8" />
                     )}
                   </Pressable>
-                </View>
+                </Pressable>
                 
                 <Pressable className="self-end mt-2 p-1" onPress={() => {}}>
                   <Text className="text-primary text-sm font-medium">
