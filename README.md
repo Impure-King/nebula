@@ -1,5 +1,5 @@
 <div align="center">
-   <img src="./src/frontend/public/logo.svg" alt="Nebula Logo" width="120" height="120" />
+   <img src="./frontend/public/logo.svg" alt="Nebula Logo" width="120" height="120" />
    <h1>Nebula</h1>
    <p>A comprehensive mobile application for creating, organizing, and sharing notes.</p>
 </div>
@@ -31,7 +31,7 @@
 1. **Setup**:
 
    ```bash
-   cd src/backend
+   cd backend
    ./setup.sh
    ```
 
@@ -48,7 +48,7 @@
 1. **Setup**:
 
    ```bash
-   cd src/frontend
+   cd frontend
    npm install
    ```
 

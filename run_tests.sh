@@ -2,9 +2,9 @@
 set -e
 
 # Configuration
-PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-BACKEND_DIR="$PROJECT_DIR/src/backend"
-FRONTEND_DIR="$PROJECT_DIR/src/frontend"
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BACKEND_DIR="$PROJECT_DIR/backend"
+FRONTEND_DIR="$PROJECT_DIR/frontend"
 
 # Colors
 GREEN='\033[0;32m'
@@ -29,14 +29,14 @@ fi
 # Run tests from Project root
 cd "$PROJECT_DIR"
 export OPENAI_API_KEY=dummy
-# Ensure src/backend is in python path if needed, though conftest handles it
+# Ensure backend is in python path if needed
 export PYTHONPATH=$PYTHONPATH:$BACKEND_DIR
 
 # Run pytest with coverage (quiet mode)
 # -q: quiet
 # --tb=no: turn off traceback printing (failed tests won't show stack traces, just failure status)
 # --disable-warnings: hide warning summary
-pytest -q --tb=no --disable-warnings --cov=src/backend/app tests/backend
+pytest -q --tb=no --disable-warnings --cov=backend/app backend/tests
 
 if [ $? -eq 0 ]; then
     echo -e "${GREEN}[Backend] Tests Passed!${NC}"

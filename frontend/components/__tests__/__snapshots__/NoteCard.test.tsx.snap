@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`NoteCard renders correctly 1`] = `
 <Animated.View
@@ -18,7 +18,7 @@ exports[`NoteCard renders correctly 1`] = `
   }
 >
   <Pressable
-    accessibilityHint="Opens note. Last updated 1 year ago."
+    accessibilityHint="Opens note. Last updated 2 years ago."
     accessibilityLabel="Note: Test Note"
     accessibilityRole="button"
     android_ripple={
@@ -63,7 +63,7 @@ exports[`NoteCard renders correctly 1`] = `
       <Text
         className="text-primary text-xs ml-1"
       >
-        1 year ago
+        2 years ago
       </Text>
     </View>
   </Pressable>

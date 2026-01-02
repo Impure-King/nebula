@@ -1,5 +1,5 @@
 import { renderHook, act, waitFor } from '@testing-library/react-native';
-import { useAIService } from '../useAIService';
+import useAIService from '../useAIService';
 
 // Mock global fetch
 global.fetch = jest.fn();
