@@ -26,7 +26,7 @@ jest.mock('../../hooks/useAIService', () => ({
 }));
 
 // Mock MarkdownRenderer to simplify snapshot
-jest.mock('../MarkdownRenderer', () => 'MarkdownRenderer');
+jest.mock('@/components/shared/MarkdownRenderer', () => 'MarkdownRenderer');
 
 describe('AIToolsSection', () => {
     it('renders correctly', () => {
