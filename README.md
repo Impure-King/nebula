@@ -1,3 +1,5 @@
+# Please note that original repo exists on Gitlab and all Github copies are shallow forks.
+
 <div align="center">
   <img src="./frontend/public/logo.svg" alt="Nebula Logo" width="120" height="120" />
   <h1>Nebula</h1>
